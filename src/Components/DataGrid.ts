@@ -1,5 +1,5 @@
 import { Grid, RecordDoubleClickEventArgs } from '@syncfusion/ej2-vue-grids'
-import { onBeforeUnmount, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import _isEqual from 'lodash/isEqual'
 import ILayout from 'modules/Config/models/Layout/LayoutInterface'
 import LayoutApi from 'modules/Config/models/Layout/LayoutApi'
@@ -7,7 +7,7 @@ import sleep from '@/Helpers/sleep'
 import StatePersistance from './StatePersistance'
 import SyncfusionComponent from '@/Components/SyncfusionComponent'
 
-export default class DataGrid extends SyncfusionComponent {
+export default class DataGrid implements SyncfusionComponent {
   declare data: any[]
   declare id: string
   $component: Grid
@@ -20,10 +20,15 @@ export default class DataGrid extends SyncfusionComponent {
   /**
    * Grid persistence stage version
    */
-  stateVersion = 1
+  stateVersion = 0
 
-  constructor()
+  constructor(id: string)
   {
+    if (!id) {
+      throw new Error('Component ID is required')
+    }
+
+    this.id = id
     this.$component = new Grid()
     this.persistedState = new StatePersistance('grid')
   }
@@ -34,12 +39,8 @@ export default class DataGrid extends SyncfusionComponent {
    */
   init(): void
   {
-    if (!this.id) {
-      throw new Error('Component ID is required')
-    }
-
-    this.$grid = (<any>document.getElementById(this.id))?.ej2_instances[ 0 ]
-    if (this.$grid === undefined) {
+    this.$component = (<any>document.getElementById(this.id))?.ej2_instances[ 0 ]
+    if (this.$component === undefined) {
       throw new Error('Grid Component could not be found')
     }
 
@@ -48,34 +49,28 @@ export default class DataGrid extends SyncfusionComponent {
     this.isInitialized = true
     this.updateDataSource(this.data)
 
-    onBeforeUnmount(async () => {
-      if (
-        (this.id === 'sepGrid') ||
-        (this.id === 'SelHeaderGrid') ||
-        (this.id === 'CallOffGrid') ||
-        (this.id === 'MocsGrid') ||
-        (this.id === 'HazobGrid')
-      ) {
-        this.persistedState.state = this.getLayout()
+    this.onInit()
 
-        setTimeout(() => {
-          this.persistedState.deleteLocalStorage()
-        }, 50)
-      }
-
-      this.isInitialized = false
-    })
+    // onBeforeUnmount(async () => {
+    //   if (
+    //     (this.id === 'sepGrid') ||
+    //     (this.id === 'SelHeaderGrid') ||
+    //     (this.id === 'CallOffGrid') ||
+    //     (this.id === 'MocsGrid') ||
+    //     (this.id === 'HazobGrid')
+    //   ) {
+    //     this.persistedState.state = this.getLayout()
+    //
+    //     setTimeout(() => {
+    //       this.persistedState.deleteLocalStorage()
+    //     }, 50)
+    //   }
+    //
+    //   this.isInitialized = false
+    // })
   }
 
-  /**
-   * Updates the grid dataSource
-   * @deprecated Use updateDataSource instead
-   * @param { any[] } data Data to add to the grid
-   */
-  protected initRefresh(data: any[])
-  {
-    this.updateDataSource(data)
-  }
+  protected onInit(): void
 
   /**
    * Updates the grid dataSource
@@ -87,7 +82,7 @@ export default class DataGrid extends SyncfusionComponent {
 
     this.data = reactive([...data])
     if(this.isInitialized) {
-      this.$grid.dataSource = [...this.data]
+      this.$component.dataSource = [...this.data]
     }
   }
 
@@ -115,9 +110,7 @@ export default class DataGrid extends SyncfusionComponent {
   {
     if (!this.isInitialized) return
 
-
-    // @ts-ignore
-    this.$grid.addRecord(data, index)
+    this.$component.addRecord(data, index)
   }
   /**
    * Add an array to the grid
@@ -127,7 +120,7 @@ export default class DataGrid extends SyncfusionComponent {
   {
     if (!this.isInitialized) return
 
-    this.$grid.dataSource = [...this.$grid.dataSource, ...data]
+    this.$component.dataSource = [...this.$component.dataSource, ...data]
   }
 
   /**
@@ -137,8 +130,8 @@ export default class DataGrid extends SyncfusionComponent {
   {
     if (!this.isInitialized) return
 
-    const index = this.$grid.getRowIndexByPrimaryKey(data.id)
-    this.$grid.updateRow(index, data)
+    const index = this.$component.getRowIndexByPrimaryKey(data.id)
+    this.$component.updateRow(index, data)
   }
   /**
    * To update an array of existing items in the grid
@@ -158,9 +151,8 @@ export default class DataGrid extends SyncfusionComponent {
   delete(data: any[], id = 'id')
   {
     if (!this.isInitialized) return
-    console.log('deleting')
 
-    this.$grid.deleteRecord(id, data)
+    this.$component.deleteRecord(id, data)
   }
   /**
    * To delete an array of existing items from the grid
@@ -179,7 +171,7 @@ export default class DataGrid extends SyncfusionComponent {
    */
   selected(): any[]
   {
-    return this.$grid.getSelectedRecords()
+    return this.$component.getSelectedRecords()
   }
 
   /**
@@ -189,22 +181,22 @@ export default class DataGrid extends SyncfusionComponent {
   {
     if (!this.isInitialized) return
 
-    this.$grid.dataSource = [...this.data]
+    this.$component.dataSource = [...this.data]
   }
 
   getRows()
   {
-    const rows = this.$grid.getDataRows()
+    const rows = this.$component.getDataRows()
     const dataRows: any[] = []
     rows.forEach((element: any) => {
-      const rowData = this.$grid.getRowInfo(element).rowData
+      const rowData = this.$component.getRowInfo(element).rowData
       dataRows.push(rowData)
     })
     return dataRows
   }
 
   showColumns(args: any[]) {
-    const columnsToToggle = this.$grid.columns.filter((element: { visible: any; field: string }) => {
+    const columnsToToggle = this.$component.columns.filter((element: { visible: any; field: string }) => {
       if (
       // Only toggle if column is currently hidden
         (!element.visible) &&
@@ -217,12 +209,12 @@ export default class DataGrid extends SyncfusionComponent {
     const fieldsToToggle = columnsToToggle.map((element: { field: string }) => element.field)
     console.log('showColumns: ', fieldsToToggle)
     if (fieldsToToggle.length > 0) {
-      this.$grid.showColumns(fieldsToToggle, 'field')
+      this.$component.showColumns(fieldsToToggle, 'field')
     }
   }
 
   hideColumns(args: string | any[]) {
-    const columnsToToggle = this.$grid.columns.filter((element: { visible: any; field: string }) => {
+    const columnsToToggle = this.$component.columns.filter((element: { visible: any; field: string }) => {
       if (
       // Only toggle if column is currently visible
         (element.visible) &&
@@ -235,12 +227,12 @@ export default class DataGrid extends SyncfusionComponent {
     const fieldsToToggle = columnsToToggle.map((element: { field: any }) => element.field)
     console.log('hideColumns: ', fieldsToToggle)
     if (fieldsToToggle.length > 0) {
-      this.$grid.hideColumns(fieldsToToggle, 'field')
+      this.$component.hideColumns(fieldsToToggle, 'field')
     }
   }
 
   persistState(){
-    window.localStorage.setItem('grid' + this.id, this.$grid.getPersistData())
+    window.localStorage.setItem('grid' + this.id, this.$component.getPersistData())
   }
 
   /**
@@ -251,7 +243,7 @@ export default class DataGrid extends SyncfusionComponent {
   {
     if (!this.isInitialized) return
 
-    this.$grid.endEdit()
+    this.$component.endEdit()
   }
 
   /**
@@ -280,32 +272,32 @@ export default class DataGrid extends SyncfusionComponent {
   setFilterLength(args: any, length?: number)
   {
     if (args.requestType === 'filterchoicerequest') {
-      args.filterChoiceCount = length ?? this.$grid.dataSource.length
+      args.filterChoiceCount = length ?? this.$component.dataSource.length
     }
   }
 
   isFiltered()
   {
-    console.log(Object.keys(this.$grid.filterModule.values))
-    return this.$grid.filterModule.value === undefined
+    console.log(Object.keys(this.$component.filterModule.values))
+    return this.$component.filterModule.value === undefined
   }
 
   showSpinner()
   {
     // setTimeout(() => {
-    this.$grid.showSpinner()
+    this.$component.showSpinner()
     // }, 50)
   }
   hideSpinner()
   {
-    this.$grid.hideSpinner()
+    this.$component.hideSpinner()
   }
 
   async onLoad()
   {
     // const gridState = await db.grids.get(this.gridId)
     // console.log(gridState)
-    // console.log(this.$grid)
+    // console.log(this.$component)
   }
 
   /**
@@ -314,7 +306,7 @@ export default class DataGrid extends SyncfusionComponent {
    */
   getLayout(): string
   {
-    return this.$grid.getPersistData()
+    return this.$component.getPersistData()
   }
 
   /**
@@ -326,8 +318,8 @@ export default class DataGrid extends SyncfusionComponent {
     filterSettings: any,
   }): void
   {
-    this.$grid.columns = config.columns
-    this.$grid.filterSettings = config.filterSettings
+    this.$component.columns = config.columns
+    this.$component.filterSettings = config.filterSettings
   }
 
   /**

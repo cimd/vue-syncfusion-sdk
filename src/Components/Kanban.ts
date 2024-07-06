@@ -1,15 +1,13 @@
 import { Api, IApiResponse } from '@konnec/vue-eloquent'
-import { onBeforeUnmount, reactive } from 'vue'
+import { reactive } from 'vue'
 import { IKanbanBoard } from 'modules/Sel/models/KanbanBoard/KanbanBoardInterface'
 import { IKanbanStation } from 'modules/Sel/models/KanbanStation/KanbanStationInterface'
 import { IKanbanCardView } from 'modules/Sel/models/KanbanCard/KanbanCardInterface'
 import { getKanbanStation } from 'modules/Sel/actions/GetKanbanStation'
 import { useAuthStore } from 'modules/Application/stores/Auth'
 import KanbanCardApi from 'modules/Sel/models/KanbanCard/KanbanCardApi'
-import GridTable from '../../database/GridTable'
 import { Query } from '@syncfusion/ej2-data'
-import * as Sentry from '@sentry/vue'
-import * as pkg from '../../../../package.json'
+import StatePersistance from '@/Components/StatePersistance'
 
 export default class Kanban {
   data = reactive<IKanbanCardView[]>([])
@@ -27,6 +25,7 @@ export default class Kanban {
     assigned_department_id: null
   })
   declare public api: Api
+  persistedState: StatePersistance
   /**
    * Kanban Component query parameters
    */
@@ -37,7 +36,7 @@ export default class Kanban {
 
   id = '' as string
   componentType = 'kanban'
-  $kanban = undefined as any | undefined
+  $component = undefined as any | undefined
   protected isInitialized = false
   $dataSource = reactive<any[]>([])
 
@@ -46,13 +45,15 @@ export default class Kanban {
    */
   stateVersion = 1
 
-  constructor()
+  constructor(id: string)
   {
-    super()
+    if (!id) {
+      throw new Error('Component ID is required')
+    }
 
-    Sentry.setContext('class', {
-      name: 'Collection',
-    })
+    this.id = id
+    // this.$component = new Grid()
+    this.persistedState = new StatePersistance('kanban')
   }
 
   /**
@@ -65,26 +66,29 @@ export default class Kanban {
       throw new Error('Kanban ID is required. Did you forget to register it?')
     }
 
-    this.$kanban = document.getElementById(this.id)?.ej2_instances[ 0 ]
-    if (this.$kanban === undefined) {
+    this.$component = document.getElementById(this.id)?.ej2_instances[ 0 ]
+    if (this.$component === undefined) {
       throw new Error('Kanban Component could not be found')
     }
-    this.$kanban.query = new Query()
+    this.$component.query = new Query()
     this.isInitialized = true
 
-    onBeforeUnmount(async () => {
-      const state = this.$kanban.getPersistData()
-      GridTable.update({
-        id: this.id,
-        data: JSON.parse(state),
-        updated_at: new Date(),
-        type: 'kanban',
-        version: this.stateVersion,
-      })
-
-      this.isInitialized = false
-    })
+    this.onInit()
+    // onBeforeUnmount(async () => {
+    //   const state = this.$component.getPersistData()
+    //   GridTable.update({
+    //     id: this.id,
+    //     data: JSON.parse(state),
+    //     updated_at: new Date(),
+    //     type: 'kanban',
+    //     version: this.stateVersion,
+    //   })
+    //
+    //   this.isInitialized = false
+    // })
   }
+
+  protected onInit(): void
 
   /**
    * To refresh the datasource
@@ -94,7 +98,7 @@ export default class Kanban {
   protected initRefresh(data: any[])
   {
     if(this.isInitialized) {
-      this.$kanban.dataSource = [...data]
+      this.$component.dataSource = [...data]
     }
   }
 
@@ -118,12 +122,7 @@ export default class Kanban {
    */
   add<T>(data: T|T[], index: number | null = null)
   {
-    Sentry.setContext('Kanban', {
-      method: 'add',
-      card: data,
-      stations: this.stations
-    })
-    this.$kanban.addCard(data, index)
+    this.$component.addCard(data, index)
   }
 
   /**
@@ -134,17 +133,9 @@ export default class Kanban {
   update<T>(data: T|T[], analyticsObject: any): void
   {
     try {
-      this.$kanban.updateCard(data)
+      this.$component.updateCard(data)
     } catch (err) {
-      Sentry.setContext('Kanban', {
-        method: 'update',
-        card: data,
-        stations: this.stations,
-        syncfusionKanbanLibVersion: pkg?.dependencies[ '@syncfusion/ej2-vue-kanban' ],
-        updatedFrom: analyticsObject.updatedFrom,
-        debugData: analyticsObject.debugData
-      })
-      Sentry.captureException(err)
+      console.log(err)
     }
   }
 
@@ -155,12 +146,7 @@ export default class Kanban {
    */
   delete<T>(data: T|T[])
   {
-    Sentry.setContext('Kanban', {
-      method: 'delete',
-      card: data,
-      stations: this.stations
-    })
-    this.$kanban.deleteCard(data)
+    this.$component.deleteCard(data)
     this.clearSelectedCard()
   }
 
@@ -169,9 +155,9 @@ export default class Kanban {
    */
   deleteColumns()
   {
-    const currentColumns = this.$kanban.layoutModule.columnKeys
+    const currentColumns = this.$component.layoutModule.columnKeys
     currentColumns.forEach((key: string) => {
-      this.$kanban.deleteColumn(key)
+      this.$component.deleteColumn(key)
     })
   }
 
@@ -182,7 +168,7 @@ export default class Kanban {
   {
     let index = 0
     this.stations.forEach((element) => {
-      this.$kanban.addColumn({
+      this.$component.addColumn({
         allowToggle: true,
         headerText: element.name,
         keyField: element.name,
@@ -265,7 +251,7 @@ export default class Kanban {
    */
   cardRightClicked(e: any): IKanbanCardView
   {
-    const card = this.$kanban.getCardDetails(e.target.closest('.e-card'))
+    const card = this.$component.getCardDetails(e.target.closest('.e-card'))
     this.setSelectedCard(card)
     return this.selectedCard
   }
@@ -330,31 +316,11 @@ export default class Kanban {
         true
       )
     }
-    this.$kanban.query = query
+    this.$component.query = query
   }
 
   protected removeSearchQuery(): void
   {
-    this.$kanban.query = new Query()
-  }
-
-  protected broadcastCreated(e: any): void
-  {
-    console.log(e)
-    // this.api.show(e.id).then((response: { data: any }) => {
-    //   this.add(response.data)
-    // })
-  }
-  protected broadcastUpdated(e: any): void
-  {
-    console.log(e)
-    // this.api.show(e.id).then((response: { data: any }) => {
-    //   this.update(response.data)
-    // })
-  }
-  protected broadcastDeleted(e: any): void
-  {
-    console.log(e)
-    // this.delete(e.id)
+    this.$component.query = new Query()
   }
 }

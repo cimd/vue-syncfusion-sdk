@@ -7,6 +7,7 @@ export default abstract class SyncfusionComponent {
     abstract stateVersion: number
 
     abstract init(): void
+    abstract onInit(): void
     abstract updateDataSource<T>(data: T[]): void
     abstract refresh(): void
 

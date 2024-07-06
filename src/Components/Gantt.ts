@@ -1,17 +1,32 @@
 import { reactive } from 'vue'
 import ILayout from 'modules/Config/models/Layout/LayoutInterface'
 import LayoutApi from 'modules/Config/models/Layout/LayoutApi'
+import SyncfusionComponent from '@/Components/SyncfusionComponent'
+import { Grid } from '@syncfusion/ej2-vue-grids'
+import StatePersistance from '@/Components/StatePersistance'
 
 type position = 'Below' | 'Above' | 'Child'
 
-export default class Gantt {
+export default class Gantt implements SyncfusionComponent {
   declare data: any[]
   declare id: string
   componentType = 'gantt'
-  $gantt = undefined as any | undefined
+  $component = undefined as any | undefined
   protected isInitialized = false
   public $dataSource = reactive<any[]>([])
   stateVersion: number = 0
+  persistedState: StatePersistance
+
+  constructor(id: string)
+  {
+    if (!id) {
+      throw new Error('Component ID is required')
+    }
+
+    this.id = id
+    this.$component = new Grid()
+    this.persistedState = new StatePersistance('gantt')
+  }
 
   /**
    * To initialize the grid after mounted hook
@@ -23,27 +38,16 @@ export default class Gantt {
       throw new Error('Component ID is required')
     }
 
-    this.$gantt = document?.getElementById(this.id)?.ej2_instances[ 0 ]
+    this.$component = document?.getElementById(this.id)?.ej2_instances[ 0 ]
     // this.showSpinner()
-    this.$gantt.dataSource = this.data
-    Object.assign(this.$dataSource, this.$gantt.dataSource)
+    this.$component.dataSource = this.data
+    Object.assign(this.$dataSource, this.$component.dataSource)
     this.isInitialized = true
-  }
-
-  /**
-   * To refresh the datasource
-   * @param { any[] } data Args to be added to the datasource
-   */
-  protected initRefresh(data: any[])
-  {
-    if(this.isInitialized) {
-      this.$gantt.dataSource = [...data]
-    }
   }
 
   updateDataSource(data: any[])
   {
-    this.$gantt.updateDataSource(data)
+    this.$component.updateDataSource(data)
   }
 
   /**
@@ -68,10 +72,10 @@ export default class Gantt {
     try {
       if (save) {
         const result = await this.api.batchStore(data)
-        this.$gantt.addRecord(result.data, position)
+        this.$component.addRecord(result.data, position)
       }
       else {
-        this.$gantt.addRecord(data, position)
+        this.$component.addRecord(data, position)
       }
     }
     catch (e) {
@@ -98,7 +102,7 @@ export default class Gantt {
       if (save) {
         await this.api.update(data)
       }
-      this.$gantt.updateRecordByID(data)
+      this.$component.updateRecordByID(data)
     }
     catch (e) {
       console.error(e)
@@ -113,7 +117,7 @@ export default class Gantt {
   {
     try {
       data.forEach((element: any) => {
-        this.$gantt.updateRecordByID(element)
+        this.$component.updateRecordByID(element)
       })
       if (save) {
         await this.api.batchUpdate(data)
@@ -133,7 +137,7 @@ export default class Gantt {
   {
     try {
 
-      this.$gantt.deleteRecord(data)
+      this.$component.deleteRecord(data)
       if (save) {
         await this.api.batchDestroy(data)
       }
@@ -155,7 +159,7 @@ export default class Gantt {
    */
   selected(): any[]
   {
-    const selectedRows = this.$gantt.selectionModule.getSelectedRecords()
+    const selectedRows = this.$component.selectionModule.getSelectedRecords()
     const tasksData: any[] = []
     selectedRows.forEach((element: any) => {
       tasksData.push(element.taskData)
@@ -168,7 +172,7 @@ export default class Gantt {
    */
   selectedTasks(): any[]
   {
-    return this.$gantt.selectionModule.getSelectedRecords()
+    return this.$component.selectionModule.getSelectedRecords()
   }
 
   /**
@@ -179,7 +183,7 @@ export default class Gantt {
   setFilterLength(args: any, length?: number)
   {
     if (args.requestType === 'filterchoicerequest') {
-      args.filterChoiceCount = length ?? this.$gantt.dataSource.length
+      args.filterChoiceCount = length ?? this.$component.dataSource.length
     }
   }
   /**
@@ -188,7 +192,7 @@ export default class Gantt {
    */
   getLayout(): string
   {
-    return this.$gantt.getPersistData()
+    return this.$component.getPersistData()
   }
 
   /**
@@ -200,8 +204,8 @@ export default class Gantt {
     sortSettings: any,
   }): void
   {
-    this.$gantt.columns = [...config.columns]
-    this.$gantt.sortSettings = Object.assign({}, config.sortSettings)
+    this.$component.columns = [...config.columns]
+    this.$component.sortSettings = Object.assign({}, config.sortSettings)
 
     localStorage.setItem('gantt' + this.id, JSON.stringify(config))
   }
@@ -219,8 +223,8 @@ export default class Gantt {
     await LayoutApi.select(<number>layout.id)
 
     const { visible, hidden } = this.getColumnsVisibility(<any[]>layout.settings.columns)
-    this.$gantt.showColumn(visible)
-    this.$gantt.hideColumn(hidden)
+    this.$component.showColumn(visible)
+    this.$component.hideColumn(hidden)
 
     const el = document.getElementById('applied-layout-name')
     if (el !== null) {
@@ -234,8 +238,8 @@ export default class Gantt {
     if (!layout) return
 
     const { visible, hidden } = this.getColumnsVisibility(layout.columns)
-    this.$gantt.showColumn(visible)
-    this.$gantt.hideColumn(hidden)
+    this.$component.showColumn(visible)
+    this.$component.hideColumn(hidden)
   }
 
   protected getColumnsVisibility(columns: any[])
