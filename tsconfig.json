@@ -1,0 +1,36 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.vitest.json"
+    }
+  ],
+  "emitDeclarationOnly": true,
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "nodenext",
+    "baseUrl": ".",
+    "types": ["@types/lodash"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "strict": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "test/**/*.ts",
+    "*.ts"
+  ],
+  "exclude": ["node_modules", ".vscode", "public", "*.js"]
+}

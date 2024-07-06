@@ -1,0 +1,88 @@
+{
+  "name": "@konnec/vue-syncfusion-sdk",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "vite",
+    "build": "run-p type-check build-only",
+    "preview": "vite preview",
+    "test:unit": "vitest",
+    "test:unit:coverage": "vitest run --coverage.enabled=true --coverage.reporter=html",
+    "test:unit:ui": "vitest --ui --coverage.enabled=true --api 9527",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
+    "lint": "eslint . --fix",
+    "format": "prettier --write src/"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.5.0",
+    "@rushstack/eslint-patch": "^1.10.3",
+    "@syncfusion/ej2-vue-charts": "26.1.40",
+    "@syncfusion/ej2-vue-gantt": "26.1.40",
+    "@syncfusion/ej2-vue-grids": "26.1.40",
+    "@syncfusion/ej2-vue-kanban": "26.1.40",
+    "@syncfusion/ej2-vue-navigations": "26.1.40",
+    "@syncfusion/ej2-vue-pivotview": "26.1.40",
+    "@types/jsdom": "^21.1.7",
+    "@types/lodash": "^4.17.5",
+    "@types/node": "^20.14.8",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "@vitest/coverage-istanbul": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
+    "@vue/devtools-api": "^6.6.3",
+    "@vue/eslint-config-prettier": "^9.0.0",
+    "@vue/eslint-config-typescript": "^13.0.0",
+    "@vue/test-utils": "^2.4.6",
+    "@vue/tsconfig": "^0.5.1",
+    "eslint": "^9.5.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-unused-imports": "^4.0.0",
+    "eslint-plugin-vue": "^9.26.0",
+    "jsdom": "^24.1.0",
+    "msw": "^2.3.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.3.2",
+    "typescript": "^5.5.2",
+    "vite": "^5.3.1",
+    "vitest": "^1.6.0",
+    "vue": "^3.4.29",
+    "vue-tsc": "^2.0.21"
+  },
+  "resolutions": {
+    "strip-ansi": "6.0.1",
+    "string-width": "4.2.2",
+    "wrap-ansi": "7.0.0"
+  },
+  "description": "An SDK for Syncfusion Vue components",
+  "main": "./src/index.ts",
+  "type": "module",
+  "module": "./src/index.ts",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/cimd/vue-syncfusion-sdk.git"
+  },
+  "keywords": [
+    "Vue",
+    "Syncfusion",
+    "SDK"
+  ],
+  "author": "Christian D'Aquino",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cimd/vue-syncfusion-sdk/issues"
+  }
+}
