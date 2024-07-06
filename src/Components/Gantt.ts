@@ -1,15 +1,10 @@
-import { Collection } from '@konnec/vue-eloquent'
 import { reactive } from 'vue'
-import * as Sentry from '@sentry/vue'
 import ILayout from 'modules/Config/models/Layout/LayoutInterface'
 import LayoutApi from 'modules/Config/models/Layout/LayoutApi'
 
 type position = 'Below' | 'Above' | 'Child'
 
-Sentry.setContext('class', {
-  name: 'Gantt',
-})
-export default class Gantt extends Collection<any> {
+export default class Gantt {
   declare data: any[]
   declare id: string
   componentType = 'gantt'
@@ -17,11 +12,6 @@ export default class Gantt extends Collection<any> {
   protected isInitialized = false
   public $dataSource = reactive<any[]>([])
   stateVersion: number = 0
-
-  constructor()
-  {
-    super()
-  }
 
   /**
    * To initialize the grid after mounted hook
@@ -33,9 +23,7 @@ export default class Gantt extends Collection<any> {
       throw new Error('Component ID is required')
     }
 
-     
-    // @ts-ignore
-    this.$gantt = document.getElementById(this.id).ej2_instances[ 0 ]
+    this.$gantt = document?.getElementById(this.id)?.ej2_instances[ 0 ]
     // this.showSpinner()
     this.$gantt.dataSource = this.data
     Object.assign(this.$dataSource, this.$gantt.dataSource)
@@ -194,27 +182,6 @@ export default class Gantt extends Collection<any> {
       args.filterChoiceCount = length ?? this.$gantt.dataSource.length
     }
   }
-
-  protected broadcastCreated(e: any): void
-  {
-    console.log(e)
-    this.api.show(e.id).then((response: { data: any }) => {
-      this.add(response.data)
-    })
-  }
-  protected broadcastUpdated(e: any): void
-  {
-    console.log(e)
-    this.api.show(e.id).then((response: { data: any }) => {
-      this.update(response.data)
-    })
-  }
-  protected broadcastDeleted(e: any): void
-  {
-    console.log(e)
-    this.delete(e.id)
-  }
-
   /**
    * Return grid's persisted state
    * @protected

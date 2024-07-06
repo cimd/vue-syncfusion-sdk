@@ -3,13 +3,14 @@ import { onBeforeUnmount, reactive, ref } from 'vue'
 import _isEqual from 'lodash/isEqual'
 import ILayout from 'modules/Config/models/Layout/LayoutInterface'
 import LayoutApi from 'modules/Config/models/Layout/LayoutApi'
-import sleep from 'src/app/helpers/Sleep'
+import sleep from '@/Helpers/sleep'
 import StatePersistance from './StatePersistance'
+import SyncfusionComponent from '@/Components/SyncfusionComponent'
 
-export default class DataGrid {
+export default class DataGrid extends SyncfusionComponent {
   declare data: any[]
   declare id: string
-  $grid: Grid
+  $component: Grid
 
   protected isInitialized = false
   protected heightOffset = 350
@@ -23,8 +24,7 @@ export default class DataGrid {
 
   constructor()
   {
-    super()
-    this.$grid = new Grid()
+    this.$component = new Grid()
     this.persistedState = new StatePersistance('grid')
   }
 
@@ -115,7 +115,7 @@ export default class DataGrid {
   {
     if (!this.isInitialized) return
 
-     
+
     // @ts-ignore
     this.$grid.addRecord(data, index)
   }
@@ -306,24 +306,6 @@ export default class DataGrid {
     // const gridState = await db.grids.get(this.gridId)
     // console.log(gridState)
     // console.log(this.$grid)
-  }
-
-  protected broadcastCreated(e: any): void
-  {
-    this.api.show(e.id).then((response: { data: any }) => {
-      this.add(response.data)
-    })
-  }
-  protected broadcastUpdated(e: any): void
-  {
-    this.api.show(e.id).then((response: { data: any }) => {
-      this.update(response.data)
-    })
-  }
-  protected broadcastDeleted(e: any): void
-  {
-    console.log(e)
-    this.delete(e.id)
   }
 
   /**

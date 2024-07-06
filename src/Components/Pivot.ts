@@ -1,4 +1,4 @@
-import { Api, Collection } from '@konnec/vue-eloquent'
+import { Api } from '@konnec/vue-eloquent'
 import { onBeforeUnmount, reactive } from 'vue'
 import PivotToolbar from '../Enum/PivotToolbar'
 import ChartType from '../Enum/ChartType'
@@ -17,14 +17,10 @@ import {
 } from '@syncfusion/ej2-pivotview/src/model/datasourcesettings-model'
 import { Filter, Grid, Sort } from '@syncfusion/ej2-vue-grids'
 import GridTable from 'src/app/database/GridTable'
-import * as Sentry from '@sentry/vue'
 import ILayout from 'modules/Config/models/Layout/LayoutInterface'
 import LayoutApi from 'modules/Config/models/Layout/LayoutApi'
 
-Sentry.setContext('class', {
-  name: 'Pivot',
-})
-export default class Pivot extends Collection<any> {
+export default class Pivot {
   /**
    * Pivot DOM id
    * @param { string } id

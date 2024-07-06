@@ -1,4 +1,4 @@
-import { Api, Collection, IApiResponse } from '@konnec/vue-eloquent'
+import { Api, IApiResponse } from '@konnec/vue-eloquent'
 import { onBeforeUnmount, reactive } from 'vue'
 import { IKanbanBoard } from 'modules/Sel/models/KanbanBoard/KanbanBoardInterface'
 import { IKanbanStation } from 'modules/Sel/models/KanbanStation/KanbanStationInterface'
@@ -11,7 +11,7 @@ import { Query } from '@syncfusion/ej2-data'
 import * as Sentry from '@sentry/vue'
 import * as pkg from '../../../../package.json'
 
-export default class Kanban extends Collection<any> {
+export default class Kanban {
   data = reactive<IKanbanCardView[]>([])
   stations = reactive<IKanbanStation[]>([])
   selectedCard = reactive<IKanbanCardView>({
