@@ -1,30 +1,13 @@
-import { Api, IApiResponse } from '@konnec/vue-eloquent'
 import { reactive } from 'vue'
-import { IKanbanBoard } from 'modules/Sel/models/KanbanBoard/KanbanBoardInterface'
-import { IKanbanStation } from 'modules/Sel/models/KanbanStation/KanbanStationInterface'
-import { IKanbanCardView } from 'modules/Sel/models/KanbanCard/KanbanCardInterface'
-import { getKanbanStation } from 'modules/Sel/actions/GetKanbanStation'
-import { useAuthStore } from 'modules/Application/stores/Auth'
-import KanbanCardApi from 'modules/Sel/models/KanbanCard/KanbanCardApi'
 import { Query } from '@syncfusion/ej2-data'
-import StatePersistance from '@/Components/StatePersistance'
+import StatePersistance from '@/StatePersistance/StatePersistance'
+import SyncfusionComponent from '@/Components/SyncfusionComponent'
+import { KanbanComponent } from '@syncfusion/ej2-vue-kanban'
 
-export default class Kanban {
-  data = reactive<IKanbanCardView[]>([])
-  stations = reactive<IKanbanStation[]>([])
-  selectedCard = reactive<IKanbanCardView>({
-    location_id: 0,
-    sel_id: 0,
-    assigned_id: null,
-    assigned_to: null,
-    station_id: 0,
-    station_name: '',
-    station_started_at: '',
-    updated_by: '',
-    mps_view: null,
-    assigned_department_id: null
-  })
-  declare public api: Api
+export default class Kanban<Card, Station, Board> implements SyncfusionComponent {
+  data = reactive<Card[]>([])
+  stations = reactive<Station[]>([])
+  selectedCard = reactive<Card>({ })
   persistedState: StatePersistance
   /**
    * Kanban Component query parameters
@@ -34,16 +17,14 @@ export default class Kanban {
     param: null as null | string
   }
 
-  id = '' as string
-  componentType = 'kanban'
-  $component = undefined as any | undefined
+  id: string
+  $component: KanbanComponent
   protected isInitialized = false
-  $dataSource = reactive<any[]>([])
 
   /**
    * Grid persistence stage version
    */
-  stateVersion = 1
+  stateVersion = 0
 
   constructor(id: string)
   {
@@ -52,7 +33,7 @@ export default class Kanban {
     }
 
     this.id = id
-    // this.$component = new Grid()
+    this.$component = new KanbanComponent()
     this.persistedState = new StatePersistance('kanban')
   }
 
@@ -74,18 +55,6 @@ export default class Kanban {
     this.isInitialized = true
 
     this.onInit()
-    // onBeforeUnmount(async () => {
-    //   const state = this.$component.getPersistData()
-    //   GridTable.update({
-    //     id: this.id,
-    //     data: JSON.parse(state),
-    //     updated_at: new Date(),
-    //     type: 'kanban',
-    //     version: this.stateVersion,
-    //   })
-    //
-    //   this.isInitialized = false
-    // })
   }
 
   protected onInit(): void
@@ -106,7 +75,7 @@ export default class Kanban {
    * Updates Kanban cards and stations
    *
    */
-  updateBoard(data: IKanbanBoard)
+  updateBoard(data: Board)
   {
     this.deleteColumns()
     Object.assign(this.stations, data.stations)
@@ -130,7 +99,7 @@ export default class Kanban {
    *
    * @param { T|T[] } data Data to add to the kanban
    */
-  update<T>(data: T|T[], analyticsObject: any): void
+  update<T>(data: T|T[]): void
   {
     try {
       this.$component.updateCard(data)
@@ -200,7 +169,7 @@ export default class Kanban {
    * @param { IKanbanCardView } card
    * @return { IKanbanCardView } The selected card
    */
-  setSelectedCard(card: IKanbanCardView): IKanbanCardView
+  setSelectedCard(card: Card): Card
   {
     return Object.assign(this.selectedCard, card)
   }
@@ -221,7 +190,7 @@ export default class Kanban {
    * @param { IKanbanCardView } card
    * @return { IKanbanCardView } The clicked card
    */
-  cardClick(card: IKanbanCardView): IKanbanCardView
+  cardClick(card: Card): Card
   {
     // No card is currently selected
     if (this.selectedCard.id === undefined) {
@@ -249,7 +218,7 @@ export default class Kanban {
    * @param { any } e
    * @return { IKanbanCardView } The clicked card
    */
-  cardRightClicked(e: any): IKanbanCardView
+  cardRightClicked(e: any): Card
   {
     const card = this.$component.getCardDetails(e.target.closest('.e-card'))
     this.setSelectedCard(card)
@@ -262,21 +231,16 @@ export default class Kanban {
    * @param { IKanbanCardView } card
    * @return { Promise<IKanbanCardView> }
    */
-  async dropped(card: IKanbanCardView, debugData: any[]): Promise<IKanbanCardView>
+  async dropped(card: Card): Promise<Card>
   {
-    const params = {
-      id: card.id,
-      station_id: getKanbanStation(this.stations, card.station_name)?.id,
-      updated_by: useAuthStore().user.username,
-      updated_from: 'Kanban.ts-dropped',
-      debug_data: JSON.stringify(debugData)
-    }
+    const response = await this.onDropped(card)
 
-    const response : IApiResponse<any> = await KanbanCardApi.update(params)
-    this.update(response.data, { updatedFrom: 'Kanban.ts-dropped' })
+    this.update(response.data)
 
     return response.data
   }
+
+  async onDropped(card: Card)
 
   search(query: string): void {
     this.searchQuery.param = query

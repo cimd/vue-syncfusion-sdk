@@ -1,19 +1,16 @@
 import { reactive } from 'vue'
-import ILayout from 'modules/Config/models/Layout/LayoutInterface'
-import LayoutApi from 'modules/Config/models/Layout/LayoutApi'
 import SyncfusionComponent from '@/Components/SyncfusionComponent'
-import { Grid } from '@syncfusion/ej2-vue-grids'
-import StatePersistance from '@/Components/StatePersistance'
+import StatePersistance from '@/StatePersistance/StatePersistance'
+import { GanttComponent } from '@syncfusion/ej2-vue-gantt'
 
 type position = 'Below' | 'Above' | 'Child'
 
 export default class Gantt implements SyncfusionComponent {
   declare data: any[]
   declare id: string
-  componentType = 'gantt'
-  $component = undefined as any | undefined
+  $component: GanttComponent
   protected isInitialized = false
-  public $dataSource = reactive<any[]>([])
+  $dataSource = reactive<any[]>([])
   stateVersion: number = 0
   persistedState: StatePersistance
 
@@ -24,7 +21,7 @@ export default class Gantt implements SyncfusionComponent {
     }
 
     this.id = id
-    this.$component = new Grid()
+    this.$component = new GanttComponent()
     this.persistedState = new StatePersistance('gantt')
   }
 
@@ -71,7 +68,7 @@ export default class Gantt implements SyncfusionComponent {
   {
     try {
       if (save) {
-        const result = await this.api.batchStore(data)
+        const result = await this.beforeAdd(data)
         this.$component.addRecord(result.data, position)
       }
       else {
@@ -81,6 +78,11 @@ export default class Gantt implements SyncfusionComponent {
     catch (e) {
       console.error(e)
     }
+  }
+
+  async beforeAdd(data: any): Promise<any>
+  {
+    return
   }
   /**
    * Add an array to the grid
@@ -100,7 +102,7 @@ export default class Gantt implements SyncfusionComponent {
   {
     try {
       if (save) {
-        await this.api.update(data)
+        await this.beforeUpdate(data)
       }
       this.$component.updateRecordByID(data)
     }
@@ -108,6 +110,11 @@ export default class Gantt implements SyncfusionComponent {
       console.error(e)
     }
   }
+  async beforeUpdate(data: any): Promise<any>
+  {
+    return
+  }
+
   /**
    * To update an array of existing items in the grid
    * @param { any[] } data Data to add to the grid
@@ -136,15 +143,19 @@ export default class Gantt implements SyncfusionComponent {
   async delete(data: any[], save: boolean = true): Promise<any>
   {
     try {
-
       this.$component.deleteRecord(data)
       if (save) {
-        await this.api.batchDestroy(data)
+        await this.afterDelete(data)
       }
     }
     catch (error) {
       console.error(error)
     }
+  }
+
+  async afterDelete(data: any): Promise<any>
+  {
+    return
   }
   /**
    * To delete an array of existing items from the grid
@@ -213,14 +224,14 @@ export default class Gantt implements SyncfusionComponent {
   /**
    * Refreshes the grid with the stored layout on the server
    */
-  async applyLayout(layout: ILayout)
+  async applyLayout(layout: any)
   {
     this.setLayout({
       columns: [...<any[]>layout.settings.columns],
       sortSettings: Object.assign({}, layout.settings.sortSettings),
     })
 
-    await LayoutApi.select(<number>layout.id)
+    this.onLayoutApplied(layout).then(() => {})
 
     const { visible, hidden } = this.getColumnsVisibility(<any[]>layout.settings.columns)
     this.$component.showColumn(visible)
@@ -230,6 +241,11 @@ export default class Gantt implements SyncfusionComponent {
     if (el !== null) {
       el.value = layout.name
     }
+  }
+
+  async onLayoutApplied(layout: any)
+  {
+    return
   }
 
   loadLayoutFromLocalStorage(): void

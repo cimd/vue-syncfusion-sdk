@@ -1,4 +1,4 @@
-import ComponentType from './ComponentType'
+import ComponentType from '../Components/ComponentType'
 import { db } from '../../database/db'
 import { config } from 'boot/config'
 import GridTable from '../../database/GridTable'

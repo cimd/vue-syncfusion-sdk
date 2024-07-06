@@ -24,4 +24,5 @@ export default abstract class SyncfusionComponent {
         filterSettings: any,
     }): void
     abstract applyLayout(layout: any): Promise<void>
+    abstract onLayoutApplied(layout: any): Promise<void>
 }

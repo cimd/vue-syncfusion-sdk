@@ -1,14 +1,12 @@
 import { Grid, RecordDoubleClickEventArgs } from '@syncfusion/ej2-vue-grids'
 import { reactive, ref } from 'vue'
 import _isEqual from 'lodash/isEqual'
-import ILayout from 'modules/Config/models/Layout/LayoutInterface'
-import LayoutApi from 'modules/Config/models/Layout/LayoutApi'
 import sleep from '@/Helpers/sleep'
-import StatePersistance from './StatePersistance'
+import StatePersistance from '../StatePersistance/StatePersistance'
 import SyncfusionComponent from '@/Components/SyncfusionComponent'
 
-export default class DataGrid implements SyncfusionComponent {
-  declare data: any[]
+export default class DataGrid<T> implements SyncfusionComponent {
+  declare data: T[]
   declare id: string
   $component: Grid
 
@@ -325,17 +323,22 @@ export default class DataGrid implements SyncfusionComponent {
   /**
    * Refreshes the grid with the stored layout on the server
    */
-  async applyLayout(layout: ILayout)
+  async applyLayout(layout: any)
   {
     this.setLayout({
       columns: [...<any[]>layout.settings.columns],
       filterSettings: layout.settings.filterSettings,
     })
 
-    await LayoutApi.select(<number>layout.id)
+    this.onLayoutApplied(layout).then(() => {
+      await sleep(500)
 
-    await sleep(500)
+      location.reload()
+    })
+  }
 
-    location.reload()
+  async onLayoutApplied(_layout: any)
+  {
+    return
   }
 }

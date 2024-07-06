@@ -1,5 +1,4 @@
-import { Api } from '@konnec/vue-eloquent'
-import { onBeforeUnmount, reactive } from 'vue'
+import { reactive } from 'vue'
 import PivotToolbar from '../Enum/PivotToolbar'
 import ChartType from '../Enum/ChartType'
 import {
@@ -16,17 +15,15 @@ import {
   FormatSettingsModel,
 } from '@syncfusion/ej2-pivotview/src/model/datasourcesettings-model'
 import { Filter, Grid, Sort } from '@syncfusion/ej2-vue-grids'
-import GridTable from 'src/app/database/GridTable'
-import ILayout from 'modules/Config/models/Layout/LayoutInterface'
-import LayoutApi from 'modules/Config/models/Layout/LayoutApi'
+import StatePersistance from '@/StatePersistance/StatePersistance'
+import SyncfusionComponent from '@/Components/SyncfusionComponent'
 
-export default class Pivot {
+export default class Pivot implements SyncfusionComponent {
   /**
    * Pivot DOM id
    * @param { string } id
    */
-  declare id: string
-  declare api: Api
+  id: string
   componentType = 'pivot'
 
   /**
@@ -37,14 +34,15 @@ export default class Pivot {
   protected isInitialized = false
   /**
    * Syncfusions PivotView instance
-   * @param { PivotView } $pivot
+   * @param { PivotView } $component
    */
-  $pivot: PivotView
+  $component: PivotView
 
+  persistedState: StatePersistance
   /**
    * Grid persistence stage version
    */
-  stateVersion = 1
+  stateVersion = 0
 
   /*
   | Datasource Settings
@@ -101,10 +99,15 @@ export default class Pivot {
   | ------------------------------------------------
    */
 
-  constructor()
+  constructor(id: string)
   {
-    super()
-    this.$pivot = new PivotView({})
+    if (!id) {
+      throw new Error('Component ID is required')
+    }
+
+    this.id = id
+    this.$component = new PivotView({})
+    this.persistedState = new StatePersistance('grid')
   }
 
   /**
@@ -134,31 +137,18 @@ export default class Pivot {
    */
   init()
   {
-    if (this.id === '') {
-      throw new Error('Pivot ID is required')
-    }
-
-    this.$pivot = document.getElementById(this.id)?.ej2_instances[ 0 ]
-    if (this.$pivot === undefined) {
+    this.$component = document.getElementById(this.id)?.ej2_instances[ 0 ]
+    if (this.$component === undefined) {
       throw new Error('Pivot Component could not be found')
     }
 
-    this.$pivot.enableFieldSearching = true
+    this.$component.enableFieldSearching = true
     this.isInitialized = true
 
-    onBeforeUnmount(async () => {
-      const state = this.$pivot.getPersistData()
-      GridTable.update({
-        id: this.id,
-        data: JSON.parse(state),
-        updated_at: new Date(),
-        type: 'pivot',
-        version: this.stateVersion,
-      })
-
-      this.isInitialized = false
-    })
+    this.onInit()
   }
+
+  protected onInit(): void
 
   /**
    * To update the Pivot DataSource
@@ -168,7 +158,7 @@ export default class Pivot {
    */
   update<T>(data: T[])
   {
-    this.$pivot.dataSourceSettings.dataSource = [...data]
+    this.$component.dataSourceSettings.dataSource = [...data]
   }
 
   /**
@@ -203,7 +193,7 @@ export default class Pivot {
   {
     if (!this.isInitialized) return
 
-    this.$pivot.refresh()
+    this.$component.refresh()
   }
 
 
@@ -213,7 +203,7 @@ export default class Pivot {
    */
   getLayout(): string
   {
-    const json = JSON.parse(this.$pivot.getPersistData())
+    const json = JSON.parse(this.$component.getPersistData())
     return JSON.stringify(json)
   }
 
@@ -223,21 +213,26 @@ export default class Pivot {
    */
   protected setLayout(config: any): void
   {
-    this.$pivot.loadPersistData(JSON.stringify(config))
+    this.$component.loadPersistData(JSON.stringify(config))
   }
 
   /**
    * Refreshes the grid with the stored layout on the server
    */
-  async applyLayout(layout: ILayout)
+  async applyLayout(layout: any)
   {
     this.setLayout(layout.settings)
 
-    await LayoutApi.select(<number>layout.id)
+    this.onLayoutApplied(layout).then(() => { })
 
     const el = document.getElementById('applied-layout-name')
     if (el !== null) {
       el.value = layout.name
     }
+  }
+
+  async onLayoutApplied(_layout: any)
+  {
+    return
   }
 }
