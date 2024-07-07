@@ -5,22 +5,24 @@ import { GanttComponent } from '@syncfusion/ej2-vue-gantt'
 
 type position = 'Below' | 'Above' | 'Child'
 
-export default class Gantt implements SyncfusionComponent {
-  declare data: any[]
-  declare id: string
+export default class Gantt<T> implements SyncfusionComponent {
+  declare data: T[]
+  id: string
   $component: GanttComponent
   protected isInitialized = false
-  $dataSource = reactive<any[]>([])
+  $dataSource = reactive<T[]>([])
   stateVersion: number = 0
   persistedState: StatePersistance
 
-  constructor(id: string)
+  constructor(config: { id: string, stateVersion: number })
   {
-    if (!id) {
+    if (!config.id) {
       throw new Error('Component ID is required')
     }
 
-    this.id = id
+    this.id = config.id
+    if (config.stateVersion) { this.stateVersion = config.stateVersion }
+
     this.$component = new GanttComponent()
     this.persistedState = new StatePersistance('gantt')
   }
@@ -31,12 +33,11 @@ export default class Gantt implements SyncfusionComponent {
    */
   init()
   {
-    if (!this.id) {
-      throw new Error('Component ID is required')
+    this.$component = document?.getElementById(this.id)?.ej2_instances[ 0 ]
+    if (this.$component === undefined) {
+      throw new Error('Gantt Component could not be found')
     }
 
-    this.$component = document?.getElementById(this.id)?.ej2_instances[ 0 ]
-    // this.showSpinner()
     this.$component.dataSource = this.data
     Object.assign(this.$dataSource, this.$component.dataSource)
     this.isInitialized = true
@@ -64,7 +65,7 @@ export default class Gantt implements SyncfusionComponent {
    * @param { position } position Position of the new item
    * @param { boolean } save If change should be saved to server
    */
-  async add(data: any | any[], position: position = 'Below', save: boolean = true): Promise<void>
+  async add(data: T | T[], position: position = 'Below', save: boolean = true): Promise<void>
   {
     try {
       if (save) {
@@ -80,7 +81,7 @@ export default class Gantt implements SyncfusionComponent {
     }
   }
 
-  async beforeAdd(data: any): Promise<any>
+  async beforeAdd(data: T): Promise<any>
   {
     return
   }
@@ -90,7 +91,7 @@ export default class Gantt implements SyncfusionComponent {
    * @param { position } position Position of the new item
    * @param { boolean } save If change should be saved to server
    */
-  async batchAdd(data: any[], position: position = 'Below', save = true): Promise<void>
+  async batchAdd(data: T[], position: position = 'Below', save = true): Promise<void>
   {
     await this.add(data, position, save)
   }
@@ -98,7 +99,7 @@ export default class Gantt implements SyncfusionComponent {
   /**
    * To update an existing item in the grid
    */
-  async update(data: any, save = true): Promise<void>
+  async update(data: T, save = true): Promise<void>
   {
     try {
       if (save) {
@@ -110,7 +111,7 @@ export default class Gantt implements SyncfusionComponent {
       console.error(e)
     }
   }
-  async beforeUpdate(data: any): Promise<any>
+  async beforeUpdate(data: T): Promise<any>
   {
     return
   }
@@ -120,19 +121,23 @@ export default class Gantt implements SyncfusionComponent {
    * @param { any[] } data Data to add to the grid
    * @param { boolean } save If change should be saved to server
    */
-  async batchUpdate(data: any[], save = true): Promise<any>
+  async batchUpdate(data: T[], save = true): Promise<any>
   {
     try {
       data.forEach((element: any) => {
         this.$component.updateRecordByID(element)
       })
       if (save) {
-        await this.api.batchUpdate(data)
+        await this.beforeBatchUpdate(data)
       }
     }
     catch (e) {
       console.error(e)
     }
+  }
+  async beforeBatchUpdate(data: T): Promise<any>
+  {
+    return
   }
 
   /**
@@ -140,7 +145,7 @@ export default class Gantt implements SyncfusionComponent {
    * @param { any[] } data Data to add to the grid
    * @param { boolean } save If change should be saved to server
    */
-  async delete(data: any[], save: boolean = true): Promise<any>
+  async delete(data: T[], save: boolean = true): Promise<any>
   {
     try {
       this.$component.deleteRecord(data)
@@ -153,7 +158,7 @@ export default class Gantt implements SyncfusionComponent {
     }
   }
 
-  async afterDelete(data: any): Promise<any>
+  async afterDelete(data: T): Promise<any>
   {
     return
   }
@@ -168,7 +173,7 @@ export default class Gantt implements SyncfusionComponent {
   /**
    * Return selected tasks data from the grid
    */
-  selected(): any[]
+  selected(): T[]
   {
     const selectedRows = this.$component.selectionModule.getSelectedRecords()
     const tasksData: any[] = []
@@ -181,7 +186,7 @@ export default class Gantt implements SyncfusionComponent {
   /**
    * Return selected records from the grid
    */
-  selectedTasks(): any[]
+  selectedTasks(): T[]
   {
     return this.$component.selectionModule.getSelectedRecords()
   }

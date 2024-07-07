@@ -5,9 +5,9 @@ import sleep from '@/Helpers/sleep'
 import StatePersistance from '../StatePersistance/StatePersistance'
 import SyncfusionComponent from '@/Components/SyncfusionComponent'
 
-export default class DataGrid<T> implements SyncfusionComponent {
+export default abstract class DataGrid<T> implements SyncfusionComponent {
   declare data: T[]
-  declare id: string
+  id: string
   $component: Grid
 
   protected isInitialized = false
@@ -20,13 +20,15 @@ export default class DataGrid<T> implements SyncfusionComponent {
    */
   stateVersion = 0
 
-  constructor(id: string)
+  protected constructor(config: { id: string, stateVersion: number })
   {
-    if (!id) {
+    if (!config.id) {
       throw new Error('Component ID is required')
     }
 
-    this.id = id
+    this.id = config.id
+    if (config.stateVersion) { this.stateVersion = config.stateVersion }
+
     this.$component = new Grid()
     this.persistedState = new StatePersistance('grid')
   }
@@ -48,24 +50,6 @@ export default class DataGrid<T> implements SyncfusionComponent {
     this.updateDataSource(this.data)
 
     this.onInit()
-
-    // onBeforeUnmount(async () => {
-    //   if (
-    //     (this.id === 'sepGrid') ||
-    //     (this.id === 'SelHeaderGrid') ||
-    //     (this.id === 'CallOffGrid') ||
-    //     (this.id === 'MocsGrid') ||
-    //     (this.id === 'HazobGrid')
-    //   ) {
-    //     this.persistedState.state = this.getLayout()
-    //
-    //     setTimeout(() => {
-    //       this.persistedState.deleteLocalStorage()
-    //     }, 50)
-    //   }
-    //
-    //   this.isInitialized = false
-    // })
   }
 
   protected onInit(): void
@@ -146,7 +130,7 @@ export default class DataGrid<T> implements SyncfusionComponent {
   /**
    * To delete an existing item from the grid
    */
-  delete(data: any[], id = 'id')
+  delete(data: T[], id = 'id')
   {
     if (!this.isInitialized) return
 
@@ -155,7 +139,7 @@ export default class DataGrid<T> implements SyncfusionComponent {
   /**
    * To delete an array of existing items from the grid
    */
-  batchDelete(data: any[], id = 'id')
+  batchDelete(data: T[], id = 'id')
   {
     if (!this.isInitialized) return
 
@@ -167,7 +151,7 @@ export default class DataGrid<T> implements SyncfusionComponent {
   /**
    * Return selected items from the grid
    */
-  selected(): any[]
+  selected(): T[]
   {
     return this.$component.getSelectedRecords()
   }
@@ -330,7 +314,7 @@ export default class DataGrid<T> implements SyncfusionComponent {
       filterSettings: layout.settings.filterSettings,
     })
 
-    this.onLayoutApplied(layout).then(() => {
+    this.onLayoutApplied(layout).then(async () => {
       await sleep(500)
 
       location.reload()

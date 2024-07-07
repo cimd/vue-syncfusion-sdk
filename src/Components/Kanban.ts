@@ -4,7 +4,7 @@ import StatePersistance from '@/StatePersistance/StatePersistance'
 import SyncfusionComponent from '@/Components/SyncfusionComponent'
 import { KanbanComponent } from '@syncfusion/ej2-vue-kanban'
 
-export default class Kanban<Card, Station, Board> implements SyncfusionComponent {
+export default class Kanban<Card, Station> implements SyncfusionComponent {
   data = reactive<Card[]>([])
   stations = reactive<Station[]>([])
   selectedCard = reactive<Card>({ })
@@ -26,13 +26,15 @@ export default class Kanban<Card, Station, Board> implements SyncfusionComponent
    */
   stateVersion = 0
 
-  constructor(id: string)
+  constructor(config: { id: string, stateVersion: number })
   {
-    if (!id) {
+    if (!config.id) {
       throw new Error('Component ID is required')
     }
 
-    this.id = id
+    this.id = config.id
+    if (config.stateVersion) { this.stateVersion = config.stateVersion }
+
     this.$component = new KanbanComponent()
     this.persistedState = new StatePersistance('kanban')
   }
@@ -43,10 +45,6 @@ export default class Kanban<Card, Station, Board> implements SyncfusionComponent
    */
   init()
   {
-    if (this.id === '') {
-      throw new Error('Kanban ID is required. Did you forget to register it?')
-    }
-
     this.$component = document.getElementById(this.id)?.ej2_instances[ 0 ]
     if (this.$component === undefined) {
       throw new Error('Kanban Component could not be found')
@@ -75,11 +73,11 @@ export default class Kanban<Card, Station, Board> implements SyncfusionComponent
    * Updates Kanban cards and stations
    *
    */
-  updateBoard(data: Board)
+  updateBoard(stations: Station[], cards: Card[])
   {
     this.deleteColumns()
-    Object.assign(this.stations, data.stations)
-    super.updateDataSource(data.cards_view)
+    Object.assign(this.stations, stations)
+    super.updateDataSource(cards)
     this.createStations()
   }
 
@@ -89,7 +87,7 @@ export default class Kanban<Card, Station, Board> implements SyncfusionComponent
    * @param { T|T[] } data Data to add to the kanban
    * @param { number | null } index Position of the new item
    */
-  add<T>(data: T|T[], index: number | null = null)
+  add(data: Card|Card[], index: number | null = null)
   {
     this.$component.addCard(data, index)
   }
@@ -99,7 +97,7 @@ export default class Kanban<Card, Station, Board> implements SyncfusionComponent
    *
    * @param { T|T[] } data Data to add to the kanban
    */
-  update<T>(data: T|T[]): void
+  update(data: Card|Card[]): void
   {
     try {
       this.$component.updateCard(data)
@@ -113,7 +111,7 @@ export default class Kanban<Card, Station, Board> implements SyncfusionComponent
    *
    * @param { T|T[] } data Data to add to the kanban
    */
-  delete<T>(data: T|T[])
+  delete(data: Card|Card[])
   {
     this.$component.deleteCard(data)
     this.clearSelectedCard()
@@ -181,7 +179,6 @@ export default class Kanban<Card, Station, Board> implements SyncfusionComponent
   clearSelectedCard(): void
   {
     for (const key in this.selectedCard) delete this.selectedCard[ key ]
-    // console.log('Cleared:', this.selectedCard)
   }
 
   /**
@@ -195,19 +192,16 @@ export default class Kanban<Card, Station, Board> implements SyncfusionComponent
     // No card is currently selected
     if (this.selectedCard.id === undefined) {
       this.setSelectedCard(card)
-      // console.log('New Card Selected: ID ', this.selectedCard.id)
       return this.selectedCard
     }
 
     // Different card selected
     if (this.selectedCard.id !== card.id) {
       this.setSelectedCard(card)
-      // console.log('Replaced Card Selection: ID ', this.selectedCard.id)
       return this.selectedCard
     }
 
     // Deselecting the card
-    // console.log('Deselecting Card')
     this.clearSelectedCard()
     return this.selectedCard
   }

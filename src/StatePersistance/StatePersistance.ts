@@ -1,7 +1,4 @@
 import ComponentType from '../Components/ComponentType'
-import { db } from '../../database/db'
-import { config } from 'boot/config'
-import GridTable from '../../database/GridTable'
 import { ColumnModel } from '@syncfusion/ej2-vue-grids'
 
 export default class StatePersistance {
@@ -15,12 +12,6 @@ export default class StatePersistance {
 
     if (id) {
       this.id = id
-      db.grids.get(this._id).then(state => {
-        if (!state) return
-
-        this._state = state.data
-      })
-      // this.localStorageId = this.type + this.id
     }
   }
 
@@ -49,13 +40,6 @@ export default class StatePersistance {
   {
     // console.log(this.id)
     console.log('Updating Dexie', 'ID: ', this._id)
-    return db.grids.put({
-      data: this._state,
-      id: this._id,
-      type: this.type,
-      updated_at: new Date(),
-      version: config.appVersion,
-    }, this._id)
   }
 
   async setLocalStorage() {
@@ -63,9 +47,6 @@ export default class StatePersistance {
       localStorage.setItem(this.localStorageId, JSON.stringify(this._state))
       return true
     }
-
-    const state = await GridTable.find(this._id)
-    if (!state) return false
 
     localStorage.setItem(this.localStorageId, JSON.stringify(state))
 
@@ -79,13 +60,6 @@ export default class StatePersistance {
 
   async addColumn(column: ColumnModel)
   {
-    const layout = await db.grids.get(this._id)
-    if (!layout) return
-
-    layout.data.columns.push(column)
-    layout.version = config.appVersion
-
-    await db.grids.put(layout, this._id)
   }
   updateColumn()
   {

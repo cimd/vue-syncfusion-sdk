@@ -18,7 +18,7 @@ import { Filter, Grid, Sort } from '@syncfusion/ej2-vue-grids'
 import StatePersistance from '@/StatePersistance/StatePersistance'
 import SyncfusionComponent from '@/Components/SyncfusionComponent'
 
-export default class Pivot implements SyncfusionComponent {
+export default class Pivot<T> implements SyncfusionComponent {
   /**
    * Pivot DOM id
    * @param { string } id
@@ -47,8 +47,8 @@ export default class Pivot implements SyncfusionComponent {
   /*
   | Datasource Settings
    */
-  dataSourceSettings = reactive({} as DataSourceSettings)
-  data: any[] = []
+  dataSourceSettings = reactive<DataSourceSettings>({})
+  data: T[] = []
   protected expandAll = true
   protected rows = [] as FieldOptionsModel[]
   protected columns = [] as FieldOptionsModel[]
@@ -76,17 +76,17 @@ export default class Pivot implements SyncfusionComponent {
     PivotToolbar.NumberFormatting,
     PivotToolbar.FieldList
   ])
-  displayOption = reactive({
+  displayOption = reactive<DisplayOption>({
     primary: 'Chart',
     view: 'Both'
-  } as DisplayOption)
-  chartTypes = reactive([
+  })
+  chartTypes = reactive<ChartSeriesType[]>([
     ChartType.StackingColumn,
     ChartType.Column,
     ChartType.Bar,
     ChartType.Line,
     ChartType.Area
-  ] as ChartSeriesType[])
+  ])
   chartSettings = reactive({
     enableMultipleAxis: true,
     chartSeries: { type: ChartType.Column },
@@ -99,15 +99,17 @@ export default class Pivot implements SyncfusionComponent {
   | ------------------------------------------------
    */
 
-  constructor(id: string)
+  constructor(config: { id: string, stateVersion: number })
   {
-    if (!id) {
+    if (!config.id) {
       throw new Error('Component ID is required')
     }
 
-    this.id = id
+    this.id = config.id
+    if (config.stateVersion) { this.stateVersion = config.stateVersion }
+
     this.$component = new PivotView({})
-    this.persistedState = new StatePersistance('grid')
+    this.persistedState = new StatePersistance('pivot')
   }
 
   /**
