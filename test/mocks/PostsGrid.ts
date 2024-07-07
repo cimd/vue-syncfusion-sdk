@@ -1,9 +1,9 @@
-import { DataGrid } from '../../src/index.js'
+import { DataGrid } from '../../src/index.ts'
 import Post from './datasets/PostInterface.js'
 
 export default class PostsGrid extends DataGrid<Post> {
 
   constructor() {
-    super({ id: 'postsGrid', stateVersion: 0 })
+    super({ id: 'grid', stateVersion: 0 })
   }
 }

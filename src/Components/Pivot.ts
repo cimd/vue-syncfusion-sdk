@@ -15,10 +15,9 @@ import {
   FormatSettingsModel,
 } from '@syncfusion/ej2-pivotview/src/model/datasourcesettings-model'
 import { Filter, Grid, Sort } from '@syncfusion/ej2-vue-grids'
-import StatePersistance from '@/StatePersistance/StatePersistance'
 import SyncfusionComponent from '@/Components/SyncfusionComponent'
 
-export default class Pivot<T> implements SyncfusionComponent {
+export default abstract class Pivot<T> implements SyncfusionComponent {
   /**
    * Pivot DOM id
    * @param { string } id
@@ -38,7 +37,6 @@ export default class Pivot<T> implements SyncfusionComponent {
    */
   $component: PivotView
 
-  persistedState: StatePersistance
   /**
    * Grid persistence stage version
    */
@@ -99,7 +97,7 @@ export default class Pivot<T> implements SyncfusionComponent {
   | ------------------------------------------------
    */
 
-  constructor(config: { id: string, stateVersion: number })
+  protected constructor(config: { id: string, stateVersion: number })
   {
     if (!config.id) {
       throw new Error('Component ID is required')
@@ -109,7 +107,6 @@ export default class Pivot<T> implements SyncfusionComponent {
     if (config.stateVersion) { this.stateVersion = config.stateVersion }
 
     this.$component = new PivotView({})
-    this.persistedState = new StatePersistance('pivot')
   }
 
   /**

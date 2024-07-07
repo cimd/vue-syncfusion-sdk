@@ -1,20 +1,18 @@
 import { reactive } from 'vue'
 import SyncfusionComponent from '@/Components/SyncfusionComponent'
-import StatePersistance from '@/StatePersistance/StatePersistance'
 import { GanttComponent } from '@syncfusion/ej2-vue-gantt'
 
 type position = 'Below' | 'Above' | 'Child'
 
-export default class Gantt<T> implements SyncfusionComponent {
+export default abstract class Gantt<T> implements SyncfusionComponent {
   declare data: T[]
   id: string
-  $component: GanttComponent
+  $component = undefined as undefined | GanttComponent
   protected isInitialized = false
   $dataSource = reactive<T[]>([])
   stateVersion: number = 0
-  persistedState: StatePersistance
 
-  constructor(config: { id: string, stateVersion: number })
+  protected constructor(config: { id: string, stateVersion: number })
   {
     if (!config.id) {
       throw new Error('Component ID is required')
@@ -22,9 +20,6 @@ export default class Gantt<T> implements SyncfusionComponent {
 
     this.id = config.id
     if (config.stateVersion) { this.stateVersion = config.stateVersion }
-
-    this.$component = new GanttComponent()
-    this.persistedState = new StatePersistance('gantt')
   }
 
   /**

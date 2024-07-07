@@ -1,14 +1,12 @@
 import { reactive } from 'vue'
 import { Query } from '@syncfusion/ej2-data'
-import StatePersistance from '@/StatePersistance/StatePersistance'
 import SyncfusionComponent from '@/Components/SyncfusionComponent'
 import { KanbanComponent } from '@syncfusion/ej2-vue-kanban'
 
-export default class Kanban<Card, Station> implements SyncfusionComponent {
+export default abstract class Kanban<Card, Station> implements SyncfusionComponent {
   data = reactive<Card[]>([])
   stations = reactive<Station[]>([])
   selectedCard = reactive<Card>({ })
-  persistedState: StatePersistance
   /**
    * Kanban Component query parameters
    */
@@ -18,7 +16,7 @@ export default class Kanban<Card, Station> implements SyncfusionComponent {
   }
 
   id: string
-  $component: KanbanComponent
+  $component = undefined as KanbanComponent | undefined
   protected isInitialized = false
 
   /**
@@ -26,7 +24,7 @@ export default class Kanban<Card, Station> implements SyncfusionComponent {
    */
   stateVersion = 0
 
-  constructor(config: { id: string, stateVersion: number })
+  protected constructor(config: { id: string, stateVersion: number })
   {
     if (!config.id) {
       throw new Error('Component ID is required')
@@ -34,9 +32,6 @@ export default class Kanban<Card, Station> implements SyncfusionComponent {
 
     this.id = config.id
     if (config.stateVersion) { this.stateVersion = config.stateVersion }
-
-    this.$component = new KanbanComponent()
-    this.persistedState = new StatePersistance('kanban')
   }
 
   /**

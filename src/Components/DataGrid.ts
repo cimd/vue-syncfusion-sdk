@@ -2,7 +2,6 @@ import { Grid, RecordDoubleClickEventArgs } from '@syncfusion/ej2-vue-grids'
 import { reactive, ref } from 'vue'
 import _isEqual from 'lodash/isEqual'
 import sleep from '@/Helpers/sleep'
-import StatePersistance from '../StatePersistance/StatePersistance'
 import SyncfusionComponent from '@/Components/SyncfusionComponent'
 
 export default abstract class DataGrid<T> implements SyncfusionComponent {
@@ -13,8 +12,6 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
   protected isInitialized = false
   protected heightOffset = 350
   $height = ref('500px')
-  persistedState: StatePersistance
-  componentType = 'grid'
   /**
    * Grid persistence stage version
    */
@@ -30,7 +27,6 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
     if (config.stateVersion) { this.stateVersion = config.stateVersion }
 
     this.$component = new Grid()
-    this.persistedState = new StatePersistance('grid')
   }
 
   /**
