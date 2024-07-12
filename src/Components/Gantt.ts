@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import SyncfusionComponent from '@/Components/SyncfusionComponent'
+import SyncfusionComponent from '../Components/SyncfusionComponent'
 import { GanttComponent } from '@syncfusion/ej2-vue-gantt'
 
 type position = 'Below' | 'Above' | 'Child'

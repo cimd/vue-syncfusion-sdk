@@ -1,8 +1,8 @@
 import { Grid, RecordDoubleClickEventArgs } from '@syncfusion/ej2-vue-grids'
 import { reactive, ref } from 'vue'
 import _isEqual from 'lodash/isEqual'
-import sleep from '@/Helpers/sleep'
-import SyncfusionComponent from '@/Components/SyncfusionComponent'
+import sleep from '../Helpers/sleep'
+import SyncfusionComponent from '../Components/SyncfusionComponent'
 
 export default abstract class DataGrid<T> implements SyncfusionComponent {
   declare data: T[]
@@ -40,7 +40,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
       throw new Error('Grid Component could not be found')
     }
 
-    this.persistedState.id = this.id
+    // this.persistedState.id = this.id
 
     this.isInitialized = true
     this.updateDataSource(this.data)

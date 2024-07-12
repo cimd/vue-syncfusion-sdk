@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import { Query } from '@syncfusion/ej2-data'
-import SyncfusionComponent from '@/Components/SyncfusionComponent'
+import SyncfusionComponent from '../Components/SyncfusionComponent'
 import { KanbanComponent } from '@syncfusion/ej2-vue-kanban'
 
 export default abstract class Kanban<Card, Station> implements SyncfusionComponent {
