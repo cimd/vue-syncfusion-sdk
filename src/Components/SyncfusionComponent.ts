@@ -1,5 +1,4 @@
 import { Grid, RecordDoubleClickEventArgs } from '@syncfusion/ej2-vue-grids'
-import { reactive, ref } from 'vue'
 
 export default abstract class SyncfusionComponent {
     abstract data: any[]

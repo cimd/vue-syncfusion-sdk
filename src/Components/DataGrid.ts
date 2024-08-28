@@ -1,5 +1,5 @@
 import { Grid, RecordDoubleClickEventArgs } from '@syncfusion/ej2-vue-grids'
-import { reactive, ref, watch } from 'vue'
+import { ref } from 'vue'
 import _isEqual from 'lodash/isEqual'
 import sleep from '../Helpers/sleep'
 import SyncfusionComponent from '../Components/SyncfusionComponent'
@@ -16,7 +16,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
    */
   stateVersion = 0
 
-  protected constructor(config: { id: string, stateVersion: number,  heightOffset: number}) {
+  protected constructor(config: { id: string, stateVersion: number, heightOffset: number }) {
     if (!config.id) {
       throw new Error('Component ID is required')
     }
@@ -32,8 +32,8 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
    * To initialize the grid after mounted hook
    *
    */
-  init (): void {
-    this.instance = (<any>document.getElementById(this.id))?.ej2_instances[0]
+  init(): void {
+    this.instance = (<any>document.getElementById(this.id))?.ej2_instances[ 0 ]
     if (this.instance === undefined) {
       throw new Error('Grid Component could not be found')
     }
@@ -45,7 +45,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
     this.onInit()
   }
 
-  protected onInit (): void {
+  protected onInit(): void {
     return
   }
 
@@ -53,7 +53,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
    * Updates the grid dataSource
    * @param { T[] } data Data to add to the grid
    */
-  protected updateDataSource<T> (data: T[]): void {
+  protected updateDataSource<T>(data: T[]): void {
     if (_isEqual(this.instance.dataSource, data)) return
 
     if (this.isInitialized) {
@@ -65,7 +65,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
    * Sets the grid height
    * @param { number } offset Value to offset the grid height to
    */
-  setHeight (offset?: number): void {
+  setHeight(offset?: number): void {
     if (typeof offset !== 'undefined') this.heightOffset = offset
 
     this.height.value = (screen.height - this.heightOffset) + 'px'
@@ -76,7 +76,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
    * @param { any[] } data Data to add to the grid
    * @param { number | null } index Position of the new item
    */
-  add (data: any[], index: number | null = null) {
+  add(data: any[], index: number | null = null) {
     if (!this.isInitialized) return
 
     this.instance.addRecord(data, index)
@@ -85,7 +85,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
    * Add an array to the grid
    * @param { any[] } data Data to add to the grid
    */
-  batchAdd (data: any[]): void {
+  batchAdd(data: any[]): void {
     if (!this.isInitialized) return
 
     this.instance.dataSource = [...this.instance.dataSource, ...data]
@@ -94,7 +94,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
   /**
    * To update an existing item in the grid
    */
-  update (data: any): void {
+  update(data: any): void {
     if (!this.isInitialized) return
 
     const index = this.instance.getRowIndexByPrimaryKey(data.id)
@@ -103,7 +103,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
   /**
    * To update an array of existing items in the grid
    */
-  batchUpdate (data: any[]) {
+  batchUpdate(data: any[]) {
     if (!this.isInitialized) return
 
     data.forEach((element) => {
@@ -114,7 +114,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
   /**
    * To delete an existing item from the grid
    */
-  delete (data: T[], id = 'id') {
+  delete(data: T[], id = 'id') {
     if (!this.isInitialized) return
 
     this.instance.deleteRecord(id, data)
@@ -122,7 +122,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
   /**
    * To delete an array of existing items from the grid
    */
-  batchDelete (data: T[], id = 'id') {
+  batchDelete(data: T[], id = 'id') {
     if (!this.isInitialized) return
 
     data.forEach((element) => {
@@ -133,20 +133,20 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
   /**
    * Return selected items from the grid
    */
-  selected (): T[] {
+  selected(): T[] {
     return this.instance.getSelectedRecords()
   }
 
   /**
    * Refresh the grid
    */
-  refresh (data: T[]) {
+  refresh(data: T[]) {
     if (!this.isInitialized) return
 
     this.instance.dataSource = [...data]
   }
 
-  getRows () {
+  getRows() {
     const rows = this.instance.getDataRows()
     const dataRows: any[] = []
     rows.forEach((element: any) => {
@@ -156,7 +156,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
     return dataRows
   }
 
-  showColumns (args: any[]) {
+  showColumns(args: any[]) {
     const columnsToToggle = this.instance.columns.filter((element: { visible: any; field: string }) => {
       if (
         // Only toggle if column is currently hidden
@@ -174,7 +174,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
     }
   }
 
-  hideColumns (args: string | any[]) {
+  hideColumns(args: string | any[]) {
     const columnsToToggle = this.instance.columns.filter((element: { visible: any; field: string }) => {
       if (
         // Only toggle if column is currently visible
@@ -192,7 +192,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
     }
   }
 
-  persistState () {
+  persistState() {
     window.localStorage.setItem('grid' + this.id, this.instance.getPersistData())
   }
 
@@ -200,7 +200,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
    * Saves the changes to datasource and ends the grid edit mode
    * Applicable for grid in batch edit mode
    */
-  save () {
+  save() {
     if (!this.isInitialized) return
 
     this.instance.endEdit()
@@ -211,14 +211,14 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
    *
    * @param { RecordDoubleClickEventArgs } args
    */
-  recordDoubleClick (args: RecordDoubleClickEventArgs) {
+  recordDoubleClick(args: RecordDoubleClickEventArgs) {
     this.onDoubleClick(args.rowData)
   }
 
   /**
    * Hook for Syncfusion's recordDoubleClick event
    */
-  protected onDoubleClick<T> (row: T) {
+  protected onDoubleClick<T>(row: T) {
     return row
   }
 
@@ -227,27 +227,27 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
    * @param { any } args Args on the ActionBegin event
    * @param { number } length Number of rows to include, or all rows if not specified
    */
-  setFilterLength (args: any, length?: number) {
+  setFilterLength(args: any, length?: number) {
     if (args.requestType === 'filterchoicerequest') {
       args.filterChoiceCount = length ?? this.instance.dataSource.length
     }
   }
 
-  isFiltered () {
+  isFiltered() {
     console.log(Object.keys(this.instance.filterModule.values))
     return this.instance.filterModule.value === undefined
   }
 
-  showSpinner () {
+  showSpinner() {
     // setTimeout(() => {
     this.instance.showSpinner()
     // }, 50)
   }
-  hideSpinner () {
+  hideSpinner() {
     this.instance.hideSpinner()
   }
 
-  async onLoad () {
+  async onLoad() {
     // const gridState = await db.grids.get(this.gridId)
     // console.log(gridState)
     // console.log(this.instance)
@@ -257,7 +257,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
    * Return grid's persisted state
    * @protected
    */
-  getLayout (): string {
+  getLayout(): string {
     return this.instance.getPersistData()
   }
 
@@ -265,7 +265,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
    * Set the grid state
    * @protected
    */
-  protected setLayout (config: {
+  protected setLayout(config: {
     columns: any[],
     filterSettings: any,
   }): void {
@@ -276,7 +276,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
   /**
    * Refreshes the grid with the stored layout on the server
    */
-  async applyLayout (layout: any) {
+  async applyLayout(layout: any) {
     this.setLayout({
       columns: [...<any[]>layout.settings.columns],
       filterSettings: layout.settings.filterSettings,
@@ -289,7 +289,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
     })
   }
 
-  async onLayoutApplied (_layout: any) {
+  async onLayoutApplied(_layout: any) {
     return
   }
 }
