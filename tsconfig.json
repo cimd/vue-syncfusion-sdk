@@ -1,23 +1,30 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.vitest.json"
-    }
-  ],
   "emitDeclarationOnly": true,
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "nodenext",
     "baseUrl": ".",
-    "types": ["@types/lodash"],
+    "rootDir": ".",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "declaration": true,
+    "declarationDir": "./types",
+    "paths": {
+      "@/*": [
+        "./src/*",
+      ]
+    },
+    "types": [
+      "node",
+      "@types/lodash"
+    ],
     "lib": [
       "esnext",
       "dom"
@@ -25,12 +32,20 @@
     "strict": true
   },
   "include": [
+    "examples/**/*.vue",
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
     "test/**/*.ts",
+    "test/**/*.test.ts",
     "*.ts"
   ],
-  "exclude": ["node_modules", ".vscode", "public", "*.js"]
+  "exclude": [
+    "node_modules",
+    ".vscode",
+    "public",
+    "*.js",
+    "dist"
+  ]
 }

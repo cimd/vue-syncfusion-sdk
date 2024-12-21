@@ -1,6 +1,6 @@
 {
   "name": "@konnec/vue-syncfusion-sdk",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check build-only",
@@ -9,66 +9,68 @@
     "test:unit:coverage": "vitest run --coverage.enabled=true --coverage.reporter=html",
     "test:unit:ui": "vitest --ui --coverage.enabled=true --api 9527",
     "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
-    "lint": "eslint . --fix",
-    "format": "prettier --write src/"
-  },
-  "dependencies": {
-    "lodash": "^4.17.21"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3.1.0",
-    "@eslint/js": "^9.5.0",
-    "@rushstack/eslint-patch": "^1.10.3",
-    "@syncfusion/ej2-vue-gantt": "26.1.40",
-    "@syncfusion/ej2-vue-grids": "26.1.40",
-    "@syncfusion/ej2-vue-kanban": "26.1.40",
-    "@syncfusion/ej2-vue-pivotview": "26.1.40",
-    "@types/jsdom": "^21.1.7",
-    "@types/lodash": "^4.17.5",
-    "@types/node": "^20.14.8",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
-    "@vitejs/plugin-vue": "^5.0.5",
-    "@vitest/coverage-istanbul": "^1.6.0",
-    "@vitest/ui": "^1.6.0",
-    "@vue/eslint-config-prettier": "^9.0.0",
-    "@vue/eslint-config-typescript": "^13.0.0",
-    "@vue/test-utils": "^2.4.6",
-    "@vue/tsconfig": "^0.5.1",
-    "eslint": "^9.5.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-unused-imports": "^4.0.0",
-    "eslint-plugin-vue": "^9.26.0",
-    "jsdom": "^24.1.0",
-    "prettier": "^3.3.2",
-    "typescript": "^5.5.2",
-    "vite": "^5.3.1",
-    "vitest": "^1.6.0",
-    "vue": "^3.4.29",
-    "vue-tsc": "^2.0.21"
-  },
-  "resolutions": {
-    "strip-ansi": "6.0.1",
-    "string-width": "4.2.2",
-    "wrap-ansi": "7.0.0"
+    "type-check": "vue-tsc -p tsconfig.json --composite false",
+    "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
+    "format": "prettier --write src/ test/ examples/"
   },
   "description": "An SDK for Syncfusion Vue components",
-  "main": "./src/index.ts",
   "type": "module",
-  "module": "./src/index.ts",
-  "types": "./src/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/vue-syncfusion-sdk.umd.cjs",
+  "module": "./dist/vue-syncfusion-sdk.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./src/index.d.ts",
-      "import": "./src/index.ts",
-      "require": "./src/index.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/vue-syncfusion-sdk.js",
+      "require": "./dist/vue-syncfusion-sdk.umd.cjs"
     }
   },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/cimd/vue-syncfusion-sdk.git"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.17.0",
+    "@rushstack/eslint-patch": "^1.10.4",
+    "@stylistic/eslint-plugin-js": "^2.12.1",
+    "@syncfusion/ej2-vue-gantt": "28.1.35",
+    "@syncfusion/ej2-vue-grids": "28.1.35",
+    "@syncfusion/ej2-vue-kanban": "28.1.33",
+    "@syncfusion/ej2-vue-pivotview": "28.1.33",
+    "@types/jsdom": "^21.1.7",
+    "@types/lodash": "^4.17.13",
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vitest/coverage-istanbul": "^2.1.8",
+    "@vitest/eslint-plugin": "^1.1.20",
+    "@vitest/ui": "^2.1.8",
+    "@vue/eslint-config-prettier": "^10.1.0",
+    "@vue/eslint-config-typescript": "^14.1.4",
+    "@vue/test-utils": "^2.4.6",
+    "@vue/tsconfig": "^0.7.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "eslint-plugin-vue": "^9.32.0",
+    "globals": "^15.14.0",
+    "jsdom": "^25.0.1",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vite-plugin-dts": "^4.4.0",
+    "vitest": "^2.1.8",
+    "vue": "^3.5.13",
+    "vue-tsc": "^2.1.10"
   },
   "keywords": [
     "Vue",

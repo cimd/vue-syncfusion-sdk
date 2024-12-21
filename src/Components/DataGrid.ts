@@ -4,7 +4,7 @@ import _isEqual from 'lodash/isEqual'
 import sleep from '../Helpers/sleep'
 import SyncfusionComponent from '../Components/SyncfusionComponent'
 
-export default abstract class DataGrid<T> implements SyncfusionComponent {
+export default class DataGrid<T> implements SyncfusionComponent {
   id: string
   instance: Grid
 
@@ -16,7 +16,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
    */
   stateVersion = 0
 
-  protected constructor(config: { id: string, stateVersion: number, heightOffset: number }) {
+  constructor(config: { id: string, stateVersion?: number, heightOffset?: number }) {
     if (!config.id) {
       throw new Error('Component ID is required')
     }
@@ -53,7 +53,7 @@ export default abstract class DataGrid<T> implements SyncfusionComponent {
    * Updates the grid dataSource
    * @param { T[] } data Data to add to the grid
    */
-  protected updateDataSource<T>(data: T[]): void {
+  updateDataSource<T>(data: T[]): void {
     if (_isEqual(this.instance.dataSource, data)) return
 
     if (this.isInitialized) {
