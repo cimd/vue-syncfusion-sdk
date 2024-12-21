@@ -1,21 +1,22 @@
 import { reactive } from 'vue'
 import PivotToolbar from '../Enum/PivotToolbar'
 import ChartType from '../Enum/ChartType'
-import {
+import type {
   BeginDrillThroughEventArgs,
   ChartSeriesType,
   DataSourceSettings,
-  DisplayOption,
+  DisplayOption} from '@syncfusion/ej2-vue-pivotview';
+import {
   PivotView,
 } from '@syncfusion/ej2-vue-pivotview'
-import {
+import type {
   CalculatedFieldSettingsModel,
   FieldOptionsModel,
   FilterModel,
   FormatSettingsModel,
 } from '@syncfusion/ej2-pivotview/src/model/datasourcesettings-model'
 import { Filter, Grid, Sort } from '@syncfusion/ej2-vue-grids'
-import SyncfusionComponent from '@/Components/SyncfusionComponent'
+import type SyncfusionComponent from '@/Components/SyncfusionComponent'
 
 export default abstract class Pivot<T> implements SyncfusionComponent {
   /**
@@ -222,7 +223,7 @@ export default abstract class Pivot<T> implements SyncfusionComponent {
   {
     this.setLayout(layout.settings)
 
-    this.onLayoutApplied(layout).then(() => { })
+    this.onLayoutApplied(layout).then()
 
     const el = document.getElementById('applied-layout-name')
     if (el !== null) {

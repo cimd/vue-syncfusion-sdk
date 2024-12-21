@@ -1,9 +1,10 @@
-import { Grid, RecordDoubleClickEventArgs } from '@syncfusion/ej2-vue-grids'
+import type { Grid, RecordDoubleClickEventArgs } from '@syncfusion/ej2-vue-grids'
+import type { Gantt } from '@syncfusion/ej2-gantt'
 
 export default abstract class SyncfusionComponent {
     abstract data: any[]
     abstract id: string
-    abstract $component: Grid
+    abstract $component: Grid | Gantt
     abstract stateVersion: number
 
     abstract init (): void

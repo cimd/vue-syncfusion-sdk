@@ -1,11 +1,11 @@
-import ComponentType from '../Components/ComponentType'
-import { ColumnModel } from '@syncfusion/ej2-vue-grids'
+import type ComponentType from '../Components/ComponentType'
+import type { ColumnModel } from '@syncfusion/ej2-vue-grids'
 
 export default class StatePersistance {
   type: ComponentType
-  _id: string = ''
+  _id = ''
   _state: any = undefined
-  protected localStorageId: string = ''
+  protected localStorageId = ''
 
   constructor(type: ComponentType, id?: string) {
     this.type = type

@@ -10,7 +10,7 @@
     "test:unit:ui": "vitest --ui --coverage.enabled=true --api 9527",
     "build-only": "vite build",
     "type-check": "vue-tsc -p tsconfig.json --composite false",
-    "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
+    "lint": "eslint -c ./eslint.config.js --fix \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
     "format": "prettier --write src/ test/ examples/"
   },
   "description": "An SDK for Syncfusion Vue components",

@@ -1,8 +1,9 @@
-import { Grid, RecordDoubleClickEventArgs } from '@syncfusion/ej2-vue-grids'
+import type { RecordDoubleClickEventArgs } from '@syncfusion/ej2-vue-grids';
+import { Grid } from '@syncfusion/ej2-vue-grids'
 import { ref } from 'vue'
 import _isEqual from 'lodash/isEqual'
 import sleep from '../Helpers/sleep'
-import SyncfusionComponent from '../Components/SyncfusionComponent'
+import type SyncfusionComponent from '../Components/SyncfusionComponent'
 
 export default class DataGrid<T> implements SyncfusionComponent {
   id: string
@@ -33,7 +34,7 @@ export default class DataGrid<T> implements SyncfusionComponent {
    *
    */
   init(): void {
-    this.instance = (<any>document.getElementById(this.id))?.ej2_instances[ 0 ]
+    this.instance = (document.getElementById(this.id) as any)?.ej2_instances[ 0 ]
     if (this.instance === undefined) {
       throw new Error('Grid Component could not be found')
     }
@@ -278,7 +279,7 @@ export default class DataGrid<T> implements SyncfusionComponent {
    */
   async applyLayout(layout: any) {
     this.setLayout({
-      columns: [...<any[]>layout.settings.columns],
+      columns: [...layout.settings.columns as any[]],
       filterSettings: layout.settings.filterSettings,
     })
 

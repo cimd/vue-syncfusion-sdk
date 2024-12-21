@@ -1,16 +1,16 @@
 import { reactive } from 'vue'
-import SyncfusionComponent from '../Components/SyncfusionComponent'
-import { GanttComponent } from '@syncfusion/ej2-vue-gantt'
+import type SyncfusionComponent from '../Components/SyncfusionComponent'
+import { Gantt as SyncfusionGantt } from '@syncfusion/ej2-gantt'
 
 type position = 'Below' | 'Above' | 'Child'
 
 export default abstract class Gantt<T> implements SyncfusionComponent {
   declare data: T[]
   id: string
-  $component = undefined as undefined | GanttComponent
+  $component = new SyncfusionGantt
   protected isInitialized = false
   $dataSource = reactive<T[]>([])
-  stateVersion: number = 0
+  stateVersion = 0
 
   protected constructor(config: { id: string, stateVersion: number })
   {
@@ -40,7 +40,7 @@ export default abstract class Gantt<T> implements SyncfusionComponent {
 
   updateDataSource(data: any[])
   {
-    this.$component.updateDataSource(data)
+    (this.$component as SyncfusionGantt).updateDataSource(data)
   }
 
   /**
@@ -60,7 +60,7 @@ export default abstract class Gantt<T> implements SyncfusionComponent {
    * @param { position } position Position of the new item
    * @param { boolean } save If change should be saved to server
    */
-  async add(data: T | T[], position: position = 'Below', save: boolean = true): Promise<void>
+  async add(data: T | T[], position: position = 'Below', save = true): Promise<void>
   {
     try {
       if (save) {
@@ -140,7 +140,7 @@ export default abstract class Gantt<T> implements SyncfusionComponent {
    * @param { any[] } data Data to add to the grid
    * @param { boolean } save If change should be saved to server
    */
-  async delete(data: T[], save: boolean = true): Promise<any>
+  async delete(data: T[], save = true): Promise<any>
   {
     try {
       this.$component.deleteRecord(data)
@@ -227,13 +227,13 @@ export default abstract class Gantt<T> implements SyncfusionComponent {
   async applyLayout(layout: any)
   {
     this.setLayout({
-      columns: [...<any[]>layout.settings.columns],
+      columns: [...layout.settings.columns as any[]],
       sortSettings: Object.assign({}, layout.settings.sortSettings),
     })
 
-    this.onLayoutApplied(layout).then(() => {})
+    this.onLayoutApplied(layout).then()
 
-    const { visible, hidden } = this.getColumnsVisibility(<any[]>layout.settings.columns)
+    const { visible, hidden } = this.getColumnsVisibility((layout.settings.columns as any[]))
     this.$component.showColumn(visible)
     this.$component.hideColumn(hidden)
 
@@ -250,7 +250,7 @@ export default abstract class Gantt<T> implements SyncfusionComponent {
 
   loadLayoutFromLocalStorage(): void
   {
-    const layout: any = JSON.parse(<string>localStorage.getItem('gantt' + this.id))
+    const layout: any = JSON.parse((localStorage.getItem('gantt' + this.id) as string))
     if (!layout) return
 
     const { visible, hidden } = this.getColumnsVisibility(layout.columns)
