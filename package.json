@@ -1,6 +1,6 @@
 {
   "name": "@konnec/vue-syncfusion-sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check build-only",
@@ -10,8 +10,7 @@
     "test:unit:ui": "vitest --ui --coverage.enabled=true --api 9527",
     "build-only": "vite build",
     "type-check": "vue-tsc -p tsconfig.json --composite false",
-    "lint": "eslint -c ./eslint.config.js --fix \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
-    "format": "prettier --write src/ test/ examples/"
+    "lint": "eslint -c ./eslint.config.js --fix \"./src*/**/*.{ts,js,cjs,mjs,vue}\""
   },
   "description": "An SDK for Syncfusion Vue components",
   "type": "module",

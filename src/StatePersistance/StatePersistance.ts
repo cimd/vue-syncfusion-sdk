@@ -1,4 +1,4 @@
-import type ComponentType from '../Components/ComponentType'
+import type ComponentType from '@/Sdk/ComponentType'
 import type { ColumnModel } from '@syncfusion/ej2-vue-grids'
 
 export default class StatePersistance {
@@ -60,9 +60,10 @@ export default class StatePersistance {
 
   async addColumn(column: ColumnModel)
   {
+    return
   }
   updateColumn()
   {
-
+    return
   }
 }

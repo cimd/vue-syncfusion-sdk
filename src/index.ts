@@ -1,13 +1,15 @@
 
-import DataGrid from './Components/DataGrid'
-import Gantt from './Components/Gantt'
-import Kanban from './Components/Kanban'
-import Pivot from './Components/Pivot'
-import StatePersistance from './StatePersistance/StatePersistance'
+import DataGrid from '@/Sdk/DataGrid'
+import Gantt from '@/Sdk/Gantt'
+import Kanban from '@/Sdk/Kanban'
+import Pivot from '@/Sdk/Pivot'
+import StatePersistance from '@/StatePersistance/StatePersistance'
+import GridInstance from '@/Components/GridInstance'
 
 export {
   DataGrid,
   Gantt,
+  GridInstance,
   Kanban,
   Pivot,
   StatePersistance

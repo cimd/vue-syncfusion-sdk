@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Pivot } from '../../../src/index.ts'
+import { Pivot } from '@/index'
 import PostsPivot from '../../mocks/PostsPivot.js'
 
 

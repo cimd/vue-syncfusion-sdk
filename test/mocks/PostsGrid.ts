@@ -1,5 +1,5 @@
-import { DataGrid } from '../../src/index.ts'
-import Post from './datasets/PostInterface.js'
+import { DataGrid } from '@/index'
+import type Post from './datasets/PostInterface.js'
 
 export default class PostsGrid extends DataGrid<Post> {
 

@@ -8,8 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 ### Added
 ### Changed
+### Fixed
+
+## [0.2.0]
+### Added
+- GridInstance object
+### Changed
 - Bumped dependencies
 ### Fixed
+- Types
 
 ## [0.1.0]
 ### Added

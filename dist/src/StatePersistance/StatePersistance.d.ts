@@ -1,4 +1,4 @@
-import { default as ComponentType } from '../Components/ComponentType';
+import { default as ComponentType } from '../Sdk/ComponentType';
 import { ColumnModel } from '@syncfusion/ej2-vue-grids';
 export default class StatePersistance {
     type: ComponentType;

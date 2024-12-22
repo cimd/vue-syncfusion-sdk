@@ -1,6 +1,6 @@
-import { Kanban } from '../../src/index.ts'
-import Post from './datasets/PostInterface.js'
-import Station from './datasets/StationInterface.js'
+import { Kanban } from '@/index'
+import type Post from './datasets/PostInterface.js'
+import type Station from './datasets/StationInterface.js'
 
 export default class PostsKanban extends Kanban<Post, Station> {
 
