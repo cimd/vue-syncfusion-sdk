@@ -4,12 +4,14 @@ import Gantt from '@/Sdk/Gantt'
 import Kanban from '@/Sdk/Kanban'
 import Pivot from '@/Sdk/Pivot'
 import StatePersistance from '@/StatePersistance/StatePersistance'
-import GridInstance from '@/Components/getGrid'
+import getGrid from '@/Components/getGrid'
+import getGantt from '@/Components/getGantt'
 
 export {
   DataGrid,
   Gantt,
-  GridInstance,
+  getGantt,
+  getGrid,
   Kanban,
   Pivot,
   StatePersistance
