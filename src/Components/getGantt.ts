@@ -1,15 +1,22 @@
 import type { Gantt } from '@syncfusion/ej2-vue-gantt'
 import type { DataManager, DataResult } from '@syncfusion/ej2-data'
 
-interface IGantt {
-    instance: Gantt
-    dataSource: object | DataManager | DataResult
-
-    selected(): any[]
-}
-
-const getGantt = (ganttId: string): IGantt => {
-  const instance: Gantt | null = document.getElementById(ganttId)?.ej2_instances[ 0 ]
+/**
+ * Retrieves the Gantt component instance and its associated data.
+ *
+ * @param ganttId - The ID of the HTML element containing the Gantt component.
+ * @returns An object containing:
+ *   - instance: The Gantt component instance.
+ *   - dataSource: The data source of the Gantt component.
+ *   - selected: A function that returns an array of selected row records.
+ * @throws {Error} If the Gantt component cannot be found.
+ */
+const getGantt = (ganttId: string): {
+  instance: Gantt
+  dataSource: object | DataManager | DataResult
+  selected(): any[]
+} => {
+  const instance: Gantt | null = (document.getElementById(ganttId) as any)?.ej2_instances[ 0 ]
   let dataSource = null
   if (!instance) {
     throw new Error('Gantt Component could not be found')
@@ -19,7 +26,11 @@ const getGantt = (ganttId: string): IGantt => {
   return {
     instance,
     dataSource,
-    // Return the selected row records
+    /**
+     * Returns an array of selected row records from the Gantt component.
+     *
+     * @returns An array of task data objects for the selected rows.
+     */
     selected() {
       const selectedRows = instance.selectionModule.getSelectedRecords()
       const tasksData: any[] = []

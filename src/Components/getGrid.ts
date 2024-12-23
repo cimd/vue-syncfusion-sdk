@@ -1,7 +1,26 @@
 import type { Grid } from '@syncfusion/ej2-vue-grids'
 import type { DataManager, DataResult } from '@syncfusion/ej2-data'
 
-interface IGrid<T> {
+/**
+ * Creates and returns a grid instance with associated methods for data manipulation.
+ *
+ * @template T - The type of data in the grid.
+ * @param {string} gridId - The ID of the grid component in the DOM.
+ * @returns {Object} An object containing the grid instance, data source, and methods for grid manipulation.
+ * @property {Grid} instance - The Syncfusion Grid instance.
+ * @property {object | DataManager | DataResult} dataSource - The data source of the grid.
+ * @property {function} add - Adds new records to the grid.
+ * @property {function} update - Updates a record in the grid.
+ * @property {function} save - Saves the current edit state of the grid.
+ * @property {function} batchUpdate - Updates multiple records in the grid.
+ * @property {function} delete - Deletes records from the grid.
+ * @property {function} batchDelete - Deletes multiple records from the grid.
+ * @property {function} selected - Returns the selected records in the grid.
+ * @property {function} refresh - Refreshes the grid.
+ * @property {function} getRows - Returns all rows of the grid as an array.
+ * @throws {Error} Throws an error if the Grid Component is not found.
+ */
+const getGrid = <T>(gridId: string): {
   instance: Grid
   dataSource: object | DataManager | DataResult
 
@@ -14,16 +33,8 @@ interface IGrid<T> {
   selected(): object[]
   refresh(): void
   getRows(): T[]
-}
-/**
- * If you only need a simple instance of the Grid Component
- * Returns the grid instance and its data source
- * @param gridId string The ID of the grid component
- *
- * @returns IGrid
- */
-const getGrid = <T>(gridId: string): IGrid<T> => {
-  const instance: Grid | null = document.getElementById(gridId)?.ej2_instances[ 0 ]
+} => {
+  const instance: Grid | null = (document.getElementById(gridId) as any)?.ej2_instances[ 0 ]
   let dataSource = null
   if (!instance) {
     throw new Error('Grid Component could not be found')
@@ -35,10 +46,8 @@ const getGrid = <T>(gridId: string): IGrid<T> => {
     dataSource,
     /**
      * Add a new record to the grid
-     * @param data
-     * @param index
-     *
-     * @returns void
+     * @param {T[]} data - The data to be added to the grid.
+     * @param {any} [index] - The index at which to insert the new record.
      */
     add(data: T[], index = undefined) {
       try {
@@ -47,6 +56,10 @@ const getGrid = <T>(gridId: string): IGrid<T> => {
         console.log(err)
       }
     },
+    /**
+     * Update a record in the grid
+     * @param {T} data - The updated data for the record.
+     */
     update(data: T) {
       try {
         const index = instance.getRowIndexByPrimaryKey(data.id)
@@ -55,6 +68,9 @@ const getGrid = <T>(gridId: string): IGrid<T> => {
         console.log(err)
       }
     },
+    /**
+     * Save the current edit state of the grid
+     */
     save() {
       try {
         instance.endEdit()
@@ -62,6 +78,10 @@ const getGrid = <T>(gridId: string): IGrid<T> => {
         console.log(err)
       }
     },
+    /**
+     * Update multiple records in the grid
+     * @param {T[]} data - An array of records to be updated.
+     */
     batchUpdate(data: T[]) {
       try {
         data.forEach((element) => {
@@ -71,6 +91,11 @@ const getGrid = <T>(gridId: string): IGrid<T> => {
         console.log(err)
       }
     },
+    /**
+     * Delete records from the grid
+     * @param {T[]} data - The records to be deleted.
+     * @param {string} [id='id'] - The primary key field name.
+     */
     delete(data: T[], id = 'id') {
       try {
         instance.deleteRecord(id, data)
@@ -78,6 +103,11 @@ const getGrid = <T>(gridId: string): IGrid<T> => {
         console.log(err)
       }
     },
+    /**
+     * Delete multiple records from the grid
+     * @param {T[]} data - An array of records to be deleted.
+     * @param {string} [id='id'] - The primary key field name.
+     */
     batchDelete(data: T[], id = 'id') {
       try {
         data.forEach((element) => {
@@ -87,13 +117,23 @@ const getGrid = <T>(gridId: string): IGrid<T> => {
         console.log(err)
       }
     },
-    // Methods
+    /**
+     * Get the selected records from the grid
+     * @returns {object[]} An array of selected records.
+     */
     selected() {
       return instance.getSelectedRecords()
     },
+    /**
+     * Refresh the grid
+     */
     refresh() {
       instance.refresh()
     },
+    /**
+     * Get all rows of the grid as an array
+     * @returns {T[]} An array of all row data.
+     */
     getRows(): T[] {
       const rows = instance.getDataRows()
       const dataRows: T[] = []
