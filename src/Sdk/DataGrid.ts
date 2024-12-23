@@ -77,7 +77,7 @@ export default class DataGrid<T> implements SyncfusionComponent {
    * @param { any[] } data Data to add to the grid
    * @param { number | null } index Position of the new item
    */
-  add(data: any[], index: number | null = null) {
+  add(data: T[], index?: number) {
     if (!this.isInitialized) return
 
     this.instance.addRecord(data, index)
@@ -86,7 +86,7 @@ export default class DataGrid<T> implements SyncfusionComponent {
    * Add an array to the grid
    * @param { any[] } data Data to add to the grid
    */
-  batchAdd(data: any[]): void {
+  batchAdd(data: T[]): void {
     if (!this.isInitialized) return
 
     this.instance.dataSource = [...this.instance.dataSource, ...data]
@@ -95,7 +95,7 @@ export default class DataGrid<T> implements SyncfusionComponent {
   /**
    * To update an existing item in the grid
    */
-  update(data: any): void {
+  update(data: T): void {
     if (!this.isInitialized) return
 
     const index = this.instance.getRowIndexByPrimaryKey(data.id)
@@ -104,7 +104,7 @@ export default class DataGrid<T> implements SyncfusionComponent {
   /**
    * To update an array of existing items in the grid
    */
-  batchUpdate(data: any[]) {
+  batchUpdate(data: T[]) {
     if (!this.isInitialized) return
 
     data.forEach((element) => {
@@ -230,7 +230,7 @@ export default class DataGrid<T> implements SyncfusionComponent {
    */
   setFilterLength(args: any, length?: number) {
     if (args.requestType === 'filterchoicerequest') {
-      args.filterChoiceCount = length ?? this.instance.dataSource.length
+      args.filterChoiceCount = length ?? (this.instance.dataSource as T[]).length
     }
   }
 
@@ -240,9 +240,7 @@ export default class DataGrid<T> implements SyncfusionComponent {
   }
 
   showSpinner() {
-    // setTimeout(() => {
     this.instance.showSpinner()
-    // }, 50)
   }
   hideSpinner() {
     this.instance.hideSpinner()
