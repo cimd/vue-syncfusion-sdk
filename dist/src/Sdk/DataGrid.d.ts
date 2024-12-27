@@ -36,20 +36,20 @@ export default class DataGrid<T> implements SyncfusionComponent {
      * @param { any[] } data Data to add to the grid
      * @param { number | null } index Position of the new item
      */
-    add(data: any[], index?: number | null): void;
+    add(data: T[], index?: number): void;
     /**
      * Add an array to the grid
      * @param { any[] } data Data to add to the grid
      */
-    batchAdd(data: any[]): void;
+    batchAdd(data: T[]): void;
     /**
      * To update an existing item in the grid
      */
-    update(data: any): void;
+    update(data: T): void;
     /**
      * To update an array of existing items in the grid
      */
-    batchUpdate(data: any[]): void;
+    batchUpdate(data: T[]): void;
     /**
      * To delete an existing item from the grid
      */

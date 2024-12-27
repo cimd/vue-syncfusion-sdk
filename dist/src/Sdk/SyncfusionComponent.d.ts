@@ -4,13 +4,13 @@ import { PivotView } from '@syncfusion/ej2-pivotview/src/pivotview/base/pivotvie
 export default abstract class SyncfusionComponent {
     abstract data: any[];
     abstract id: string;
-    abstract $component: typeof Grid | typeof Gantt | typeof PivotView;
+    abstract instance: Grid | Gantt | PivotView;
     abstract stateVersion: number;
     abstract init(): void;
     abstract onInit(): void;
     abstract updateDataSource<T>(data: T[]): void;
     abstract refresh(): void;
-    abstract add(data: any[], index: number | null): void;
+    abstract add(T: any[], index?: number): void;
     abstract update(data: any): void;
     abstract delete(data: any[], id: string): void;
     abstract selected(): any[];
