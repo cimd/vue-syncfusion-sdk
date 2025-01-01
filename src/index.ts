@@ -6,6 +6,7 @@ import Pivot from '@/Sdk/Pivot'
 import StatePersistance from '@/StatePersistance/StatePersistance'
 import getGrid from '@/Components/getGrid'
 import getGantt from '@/Components/getGantt'
+import registerSyncfusionLicense from '@/Sdk/registerSyncfusion'
 
 export {
   DataGrid,
@@ -14,5 +15,6 @@ export {
   getGrid,
   Kanban,
   Pivot,
+  registerSyncfusionLicense,
   StatePersistance
 }
