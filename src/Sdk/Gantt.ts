@@ -12,7 +12,7 @@ export default abstract class Gantt<T> implements SyncfusionComponent {
   $dataSource = reactive<T[]>([])
   stateVersion = 0
 
-  protected constructor(config: { id: string, stateVersion: number })
+  constructor(config: { id: string, stateVersion: number })
   {
     if (!config.id) {
       throw new Error('Component ID is required')

@@ -487,7 +487,7 @@ export default abstract class Pivot<T> implements SyncfusionComponent {
             toolbarItems: string[];
         };
     };
-    protected constructor(config: {
+    constructor(config: {
         id: string;
         stateVersion: number;
     });

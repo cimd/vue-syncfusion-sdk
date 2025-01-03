@@ -18,7 +18,7 @@ export default abstract class Kanban<Card, Station> implements SyncfusionCompone
      * Grid persistence stage version
      */
     stateVersion: number;
-    protected constructor(config: {
+    constructor(config: {
         id: string;
         stateVersion: number;
     });
@@ -39,6 +39,11 @@ export default abstract class Kanban<Card, Station> implements SyncfusionCompone
      *
      */
     updateBoard(stations: Station[], cards: Card[]): void;
+    /**
+     * Updates the grid dataSource
+     * @param { T[] } data Data to add to the grid
+     */
+    protected updateDataSource<T>(data: T[]): void;
     /**
      * Add a new item to the kanban
      *

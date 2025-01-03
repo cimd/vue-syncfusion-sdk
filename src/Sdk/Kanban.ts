@@ -2,6 +2,7 @@ import { reactive } from 'vue'
 import { Query } from '@syncfusion/ej2-data'
 import type SyncfusionComponent from '@/Sdk/SyncfusionComponent'
 import type { KanbanComponent } from '@syncfusion/ej2-vue-kanban'
+import _isEqual from 'lodash/isEqual'
 
 export default abstract class Kanban<Card, Station> implements SyncfusionComponent {
   data = reactive<Card[]>([])
@@ -24,7 +25,7 @@ export default abstract class Kanban<Card, Station> implements SyncfusionCompone
    */
   stateVersion = 0
 
-  protected constructor(config: { id: string, stateVersion: number })
+  constructor(config: { id: string, stateVersion: number })
   {
     if (!config.id) {
       throw new Error('Component ID is required')
@@ -51,6 +52,7 @@ export default abstract class Kanban<Card, Station> implements SyncfusionCompone
   }
 
   protected onInit(): void
+  { return }
 
   /**
    * To refresh the datasource
@@ -72,9 +74,21 @@ export default abstract class Kanban<Card, Station> implements SyncfusionCompone
   {
     this.deleteColumns()
     Object.assign(this.stations, stations)
-    super.updateDataSource(cards)
+    this.updateDataSource(cards)
     this.createStations()
   }
+
+    /**
+     * Updates the grid dataSource
+     * @param { T[] } data Data to add to the grid
+     */
+    protected updateDataSource<T>(data: T[]): void {
+      if (_isEqual(this.$component.dataSource, data)) return
+  
+      if (this.isInitialized) {
+        this.$component.dataSource = [...data]
+      }
+    }
 
   /**
    * Add a new item to the kanban
