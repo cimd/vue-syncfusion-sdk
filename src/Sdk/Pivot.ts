@@ -98,8 +98,9 @@ export default abstract class Pivot<T> implements SyncfusionComponent {
   | ------------------------------------------------
    */
 
-  protected constructor(config: { id: string, stateVersion: number })
+  constructor(config: { id: string, stateVersion: number })
   {
+    console.log(config)
     if (!config.id) {
       throw new Error('Component ID is required')
     }

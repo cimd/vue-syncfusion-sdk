@@ -8,7 +8,7 @@ export default abstract class Gantt<T> implements SyncfusionComponent {
     protected isInitialized: boolean;
     $dataSource: import('vue').Reactive<T[]>;
     stateVersion: number;
-    protected constructor(config: {
+    constructor(config: {
         id: string;
         stateVersion: number;
     });
