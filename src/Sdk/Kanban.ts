@@ -84,7 +84,7 @@ export default abstract class Kanban<Card, Station> implements SyncfusionCompone
      */
     protected updateDataSource<T>(data: T[]): void {
       if (_isEqual(this.$component.dataSource, data)) return
-  
+
       if (this.isInitialized) {
         this.$component.dataSource = [...data]
       }
@@ -131,6 +131,7 @@ export default abstract class Kanban<Card, Station> implements SyncfusionCompone
    */
   deleteColumns()
   {
+    console.log(this.$component)
     const currentColumns = this.$component.layoutModule.columnKeys
     currentColumns.forEach((key: string) => {
       this.$component.deleteColumn(key)
@@ -243,9 +244,10 @@ export default abstract class Kanban<Card, Station> implements SyncfusionCompone
     return response.data
   }
 
-  async onDropped(card: Card)
+  async onDropped(card: Card) {}
 
-  search(query: string): void {
+  search(query: string | null): void {
+    console.log(search)
     this.searchQuery.param = query
     this.updateSearchQuery()
   }

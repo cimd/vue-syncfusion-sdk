@@ -12,7 +12,7 @@ export default abstract class Gantt<T> implements SyncfusionComponent {
   $dataSource = reactive<T[]>([])
   stateVersion = 0
 
-  constructor(config: { id: string, stateVersion: number })
+  constructor(config: { id: string, stateVersion: number , api: typeof Api})
   {
     if (!config.id) {
       throw new Error('Component ID is required')
@@ -20,6 +20,8 @@ export default abstract class Gantt<T> implements SyncfusionComponent {
 
     this.id = config.id
     if (config.stateVersion) { this.stateVersion = config.stateVersion }
+    if (config.beforeAdd) { this.beforeAdd = config.beforeAdd }
+    console.log(this.beforeAdd)
   }
 
   /**
